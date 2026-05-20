@@ -1,0 +1,24 @@
+{
+  "traders": [
+    {
+      "id": "t_hrnwql",
+      "prop_firm": "Prop Number One",
+      "prop_color": "#1A3A6B",
+      "simbolo_prop": "XAUUSD",
+      "simbolo_hedge": "XAUUSD",
+      "size": 100000,
+      "stop_prop": 3000,
+      "target_hedge": 300,
+      "distanza": 1000,
+      "fase": "Fase 1",
+      "dd_giornaliero_pct": 5.0,
+      "dd_totale_pct": 10.0,
+      "dd_stop_pct": 4.6,
+      "target_pct": 10.0,
+      "ratio_prop": "1:3",
+      "ratio_hedge": "3:1",
+      "broker_prop_path": "",
+      "broker_hedge_path": ""
+    }
+  ]
+}

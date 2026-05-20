@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Termini e Condizioni — ArbeXa</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f8f6f1;--bg2:#ffffff;--text:#1a1a2e;--text2:#555566;
+  --gold:#c9a84c;--gold2:#e8c96d;--border:#e0ddd5;
+  --accent:#1a1a2e;
+}
+body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;line-height:1.7;}
+
+/* NAV */
+nav{background:var(--accent);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+.nav-logo{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;letter-spacing:2px;text-decoration:none;}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;letter-spacing:1px;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:var(--gold);}
+
+/* HERO */
+.hero{background:var(--accent);padding:80px 48px 60px;text-align:center;}
+.hero h1{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:3px;margin-bottom:12px;}
+.hero p{color:rgba(255,255,255,.6);font-size:14px;letter-spacing:1px;}
+.hero-line{width:60px;height:2px;background:var(--gold);margin:24px auto 0;}
+
+/* CONTENT */
+.container{max-width:860px;margin:0 auto;padding:64px 24px;}
+.section{margin-bottom:48px;}
+.section h2{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.section h3{font-size:15px;font-weight:600;color:var(--text);margin:20px 0 8px;}
+.section p{font-size:14px;color:var(--text2);margin-bottom:12px;line-height:1.8;}
+.section ul{padding-left:20px;margin-bottom:12px;}
+.section ul li{font-size:14px;color:var(--text2);margin-bottom:6px;line-height:1.7;}
+.section ul li::marker{color:var(--gold);}
+
+/* DISCLAIMER BOX */
+.disclaimer-box{background:var(--accent);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:24px 28px;margin:32px 0;}
+.disclaimer-box p{color:rgba(255,255,255,.85);font-size:13px;line-height:1.8;margin:0;}
+.disclaimer-box strong{color:var(--gold);}
+
+/* WARNING */
+.warning{background:#fff8e8;border:1px solid var(--gold2);border-radius:8px;padding:20px 24px;margin:24px 0;}
+.warning p{font-size:13px;color:#7a5c00;margin:0;}
+
+/* DATE */
+.meta-info{text-align:center;padding:32px;border-top:1px solid var(--border);color:var(--text2);font-size:12px;letter-spacing:1px;}
+
+/* FOOTER */
+footer{background:var(--accent);padding:40px 48px;text-align:center;}
+footer p{color:rgba(255,255,255,.4);font-size:12px;letter-spacing:1px;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo"><img src="/static/logo.jpg" alt="ArbeXa" style="height:42px;width:auto;display:block;"></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/download">Download</a>
+    <a href="/termini">Termini</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>TERMINI E CONDIZIONI</h1>
+  <p>Ultimo aggiornamento: Aprile 2026</p>
+  <div class="hero-line"></div>
+</div>
+
+<div class="container">
+
+  <div class="disclaimer-box">
+    <p><strong>AVVISO IMPORTANTE:</strong> ArbeXa è uno strumento software di automazione del trading. Il trading su mercati finanziari comporta rischi significativi di perdita del capitale. Leggere attentamente i presenti termini prima di utilizzare il software.</p>
+  </div>
+
+  <div class="section">
+    <h2>1. Accettazione dei Termini</h2>
+    <p>Accedendo e utilizzando il software ArbeXa e i servizi correlati disponibili su sniperpro.online (di seguito "Servizio"), l'utente accetta integralmente i presenti Termini e Condizioni d'Uso. Se non si accettano tali termini, è necessario cessare immediatamente l'utilizzo del Servizio.</p>
+    <p>I presenti Termini costituiscono un accordo legalmente vincolante tra l'utente e ArbeXa. ArbeXa si riserva il diritto di modificare i presenti Termini in qualsiasi momento. Le modifiche saranno comunicate tramite il pannello personale e/o via email.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. Descrizione del Servizio</h2>
+    <p>ArbeXa è un software di automazione del trading che:</p>
+    <ul>
+      <li>Consente l'apertura e la gestione automatizzata di ordini su piattaforme MetaTrader 5</li>
+      <li>Implementa una strategia di hedging tra un conto PROP (challenge) e un conto HEDGE personale</li>
+      <li>Monitora drawdown giornaliero, drawdown totale e target di profitto</li>
+      <li>Fornisce un pannello di controllo remoto accessibile via web</li>
+    </ul>
+    <p>Il Servizio è fornito esclusivamente come strumento tecnologico. ArbeXa non fornisce consulenza finanziaria, d'investimento o di trading.</p>
+  </div>
+
+  <div class="section">
+    <h2>3. Disclaimer — Rischi del Trading</h2>
+    <div class="disclaimer-box">
+      <p><strong>IL TRADING SU MERCATI FINANZIARI COMPORTA RISCHI ELEVATI.</strong> I risultati passati non garantiscono risultati futuri. Il valore degli strumenti finanziari può aumentare o diminuire e l'utente potrebbe non recuperare l'intero capitale investito.</p>
+    </div>
+    <p>L'utilizzo di ArbeXa non garantisce:</p>
+    <ul>
+      <li>Il superamento di challenge o prove prop firm</li>
+      <li>Profitti costanti o prevedibili</li>
+      <li>La protezione totale del capitale sul conto HEDGE</li>
+      <li>Assenza di perdite sul conto PROP o HEDGE</li>
+    </ul>
+    <p>L'utente è l'unico responsabile delle decisioni di trading prese e delle conseguenze economiche derivanti dall'utilizzo del software.</p>
+  </div>
+
+  <div class="section">
+    <h2>4. Licenza d'Uso</h2>
+    <p>ArbeXa concede all'utente una licenza personale, non esclusiva, non trasferibile e revocabile per utilizzare il software alle seguenti condizioni:</p>
+    <ul>
+      <li>La licenza è valida per la durata concordata e per il dispositivo registrato</li>
+      <li>È vietato cedere, vendere, sublicenziare o trasferire la licenza a terzi</li>
+      <li>È vietato decompilare, reverse-engineerare o modificare il software</li>
+      <li>L'installazione su più dispositivi richiede una licenza separata per ciascuno</li>
+      <li>ArbeXa si riserva il diritto di revocare la licenza in caso di violazione dei presenti Termini</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>5. Obblighi dell'Utente</h2>
+    <p>Utilizzando il Servizio, l'utente si impegna a:</p>
+    <ul>
+      <li>Non utilizzare il software per attività illegali o non autorizzate</li>
+      <li>Mantenere riservate le proprie credenziali di accesso (ID cliente, password)</li>
+      <li>Non condividere l'accesso al proprio account con terzi</li>
+      <li>Verificare la conformità dell'utilizzo del software con i termini delle prop firm utilizzate</li>
+      <li>Aggiornare regolarmente il software alle versioni più recenti</li>
+      <li>Informare tempestivamente ArbeXa di eventuali usi non autorizzati del proprio account</li>
+    </ul>
+    <div class="warning">
+      <p>⚠️ <strong>Attenzione:</strong> Alcune prop firm potrebbero non consentire l'uso di software di automazione del trading. L'utente è responsabile di verificare la conformità con le regole della propria prop firm prima di utilizzare ArbeXa.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>6. Limitazione di Responsabilità</h2>
+    <p>ArbeXa non sarà responsabile per:</p>
+    <ul>
+      <li>Perdite finanziarie derivanti dall'utilizzo del software</li>
+      <li>Interruzioni del servizio dovute a manutenzione, guasti tecnici o cause di forza maggiore</li>
+      <li>Problemi di connessione tra il software e le piattaforme MetaTrader 5</li>
+      <li>Decisioni delle prop firm riguardanti l'account dell'utente</li>
+      <li>Danni indiretti, incidentali o consequenziali di qualsiasi natura</li>
+      <li>Malfunzionamenti derivanti da configurazioni errate da parte dell'utente</li>
+    </ul>
+    <p>La responsabilità massima di ArbeXa nei confronti dell'utente è limitata all'importo pagato per la licenza nel mese precedente all'evento che ha causato il danno.</p>
+  </div>
+
+  <div class="section">
+    <h2>7. Privacy e Trattamento dei Dati</h2>
+    <p>ArbeXa raccoglie e tratta i seguenti dati necessari per il funzionamento del Servizio:</p>
+    <ul>
+      <li>Identificativo univoco del dispositivo (fingerprint)</li>
+      <li>Dati di trading (saldi, posizioni aperte, P&L) trasmessi dal software</li>
+      <li>Dati di accesso al pannello personale</li>
+      <li>Messaggi scambiati tramite il sistema di messaggistica integrato</li>
+    </ul>
+    <p>I dati non vengono ceduti a terzi e vengono utilizzati esclusivamente per la fornitura del Servizio. L'utente può richiedere la cancellazione dei propri dati contattando info@sniperpro.online.</p>
+  </div>
+
+  <div class="section">
+    <h2>8. Pagamenti e Rimborsi</h2>
+    <p>Il pagamento della licenza è dovuto anticipatamente per il periodo concordato. ArbeXa non prevede rimborsi per licenze già attivate, salvo diverso accordo scritto. In caso di malfunzionamento del software imputabile ad ArbeXa, verrà valutata una proroga della licenza.</p>
+  </div>
+
+  <div class="section">
+    <h2>9. Sospensione e Risoluzione</h2>
+    <p>ArbeXa si riserva il diritto di sospendere o terminare l'accesso al Servizio in caso di:</p>
+    <ul>
+      <li>Violazione dei presenti Termini</li>
+      <li>Utilizzo fraudolento o abusivo del software</li>
+      <li>Mancato pagamento della licenza</li>
+      <li>Attività che arrechino danno ad ArbeXa o a terzi</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>10. Legge Applicabile e Foro Competente</h2>
+    <p>I presenti Termini sono regolati dalla legge italiana. Per qualsiasi controversia derivante dall'utilizzo del Servizio, le parti si impegnano a ricercare una soluzione amichevole. In caso di mancato accordo, il foro competente esclusivo è quello di Milano (Italia).</p>
+  </div>
+
+  <div class="section">
+    <h2>11. Contatti</h2>
+    <p>Per qualsiasi domanda relativa ai presenti Termini e Condizioni:</p>
+    <ul>
+      <li><strong>Email:</strong> info@sniperpro.online</li>
+      <li><strong>Telegram:</strong> <a href="https://t.me/ArbeXa" target="_blank" style="color:var(--gold);">@ArbeXa</a> &nbsp;|&nbsp; Supporto: <a href="https://t.me/arbexa_support" target="_blank" style="color:var(--gold);">@arbexa_support</a></li>
+      <li><strong>Sito web:</strong> sniperpro.online</li>
+      <li><strong>Pannello personale:</strong> sniperpro.online/mypanel</li>
+    </ul>
+  </div>
+
+  <div class="meta-info">
+    Versione 1.0 — Aprile 2026 &nbsp;|&nbsp; ArbeXa &nbsp;|&nbsp; info@sniperpro.online
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 ArbeXa &nbsp;|&nbsp; <a href="/termini">Termini e Condizioni</a> &nbsp;|&nbsp; <a href="mailto:info@sniperpro.online">info@sniperpro.online</a></p>
+</footer>
+
+</body>
+</html>

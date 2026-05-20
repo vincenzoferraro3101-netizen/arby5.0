@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArbeXa - Guida Rapida Iniziale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #060f1e;
+            --bg-box: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --gold: #c9a84c;
+            --gold-glow: #e8c96d;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --accent: #1a1a2e;
+        }
+
+        body { background: var(--bg); color: var(--text-main); font-family: 'Sora', sans-serif; line-height: 1.6; overflow-x: hidden; }
+
+        /* NAV */
+        nav { background: var(--accent); padding: 0 48px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(0,0,0,.3); }
+        .nav-logo { color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; letter-spacing: 0; text-decoration: none; }
+        
+        .header-section {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,.15) 0%, transparent 60%);
+        }
+        .header-tag { display: inline-block; font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 3px; color: var(--gold); border: 1px solid rgba(201,168,76,.3); padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; }
+        .header-section h1 { font-size: clamp(32px, 5vw, 54px); font-weight: 700; margin-bottom: 15px; line-height: 1.2; }
+        .header-section p { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+        /* TIMELINE LAYOUT */
+        .timeline-container {
+            max-width: 800px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+            position: relative;
+        }
+        /* Linea di connessione centrale (visibile da tablet in su) */
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            left: 50%;
+            width: 2px;
+            background: linear-gradient(to bottom, rgba(201,168,76,0), var(--gold) 10%, var(--gold) 90%, rgba(201,168,76,0));
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+
+        .step-card {
+            position: relative;
+            background: var(--bg-box);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            z-index: 1;
+            width: calc(50% - 40px);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .step-card:hover { transform: translateY(-3px); border-color: rgba(201,168,76,.4); }
+
+        /* Alternanza destra/sinistra */
+        .step-card:nth-child(odd) { margin-left: 0; margin-right: auto; }
+        .step-card:nth-child(even) { margin-left: auto; margin-right: 0; }
+
+        /* Il pallino numerato al centro della linea */
+        .step-number {
+            position: absolute;
+            top: 30px;
+            width: 44px;
+            height: 44px;
+            background: var(--bg);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(201,168,76,.2);
+        }
+        .step-card:nth-child(odd) .step-number { right: -62px; }
+        .step-card:nth-child(even) .step-number { left: -62px; }
+
+        .step-title { font-size: 20px; font-weight: 600; margin-bottom: 15px; color: #fff; }
+        .step-text { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+        
+        .step-ul { margin-left: 20px; color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+        .step-ul li { margin-bottom: 8px; }
+        .step-ul li strong { color: #fff; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-block;
+            background: rgba(201,168,76,.1);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .btn:hover { background: var(--gold); color: var(--bg); box-shadow: 0 0 15px rgba(201,168,76,.4); }
+        .btn-flex { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        /* CONCLUSIONE BOX */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(201,168,76,.1), rgba(201,168,76,.02));
+            border: 1px solid rgba(201,168,76,.3);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 100px;
+            position: relative;
+            z-index: 1;
+        }
+        .conclusion-box h2 { font-size: 24px; color: var(--gold); margin-bottom: 10px; }
+        .conclusion-box p { font-size: 15px; color: var(--text-main); margin-bottom: 0; }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 850px) {
+            .timeline-container::before { left: 30px; }
+            .step-card { width: calc(100% - 60px); margin-left: auto !important; margin-right: 0 !important; }
+            .step-number { left: -52px !important; right: auto !important; }
+            nav { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="nav-logo">&lt;/ArbeXa&gt;</a>
+    </nav>
+
+    <div class="header-section">
+        <div class="header-tag">GUIDA DI AVVIO</div>
+        <h1>Inizia in 5 Semplici Passaggi</h1>
+        <p>Segui attentamente questa checklist per impostare correttamente i tuoi conti e avviare il software ArbeXa senza errori.</p>
+        <div style="margin-top: 25px; display: inline-flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;">
+            <span style="font-size: 18px;">💻</span> Requisito fondamentale: È necessario avere un sistema operativo Windows.
+        </div>
+    </div>
+
+    <div class="timeline-container">
+
+        <!-- STEP 1 -->
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-title">Apri il Conto Hedge Personale</div>
+            <div class="step-text">Il conto Hedge (copertura) è il tuo conto personale dove andrai a proteggere il rischio.</div>
+            <ul class="step-ul">
+                <li>Clicca sul pulsante qui sotto per registrarti sul broker.</li>
+                <li>Seleziona <strong>MT5 (MetaTrader 5)</strong> come piattaforma.</li>
+                <li>Verifica l'account caricando un <strong>Documento d'identità</strong> e una <strong>Prova di residenza</strong> (es. bolletta, estratto conto).</li>
+            </ul>
+            <a href="https://secure.totalfx.com/Registration/Main/Account?dest=live&camp=431" target="_blank" class="btn">Apri Conto TotalFX</a>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-title">Acquista la Challenge Prop Firm</div>
+            <div class="step-text">Scegli la prop firm che preferisci e acquista una challenge adatta alle tue ambizioni.</div>
+            <ul class="step-ul">
+                <li>Acquista un conto da <strong>50.000$</strong> o <strong>100.000$</strong>.</li>
+                <li>Attendi di ricevere le credenziali via email.</li>
+            </ul>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-title">Scarica e Installa i Terminali MT5</div>
+            <div class="step-text">Per far girare l'arbitraggio ti serviranno <strong>due</strong> piattaforme MetaTrader 5 installate e aperte contemporaneamente sul tuo PC.</div>
+            <ul class="step-ul">
+                <li>Scarica gli installer dai pulsanti qui sotto e procedi all'installazione.</li>
+                <li><strong>Attenzione:</strong> Se le installi sullo stesso PC, installale in due cartelle diverse (es. C:\Program Files\MT5_Prop e C:\Program Files\MT5_Hedge).</li>
+            </ul>
+            <div class="btn-flex">
+                <a href="https://download.mql5.com/cdn/web/total.capital.llc/mt5/totalcapital5setup.exe" target="_blank" class="btn">Download MT5 TotalFX</a>
+                <a href="https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe" target="_blank" class="btn" style="background: transparent; border-color: rgba(255,255,255,.2); color: #fff;">Download MT5 Ufficiale</a>
+            </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-title">Accedi ai Conti e Attiva Algo Trading</div>
+            <div class="step-text">Fai il login sulle due piattaforme e abilita le funzioni di trading automatico.</div>
+            <ul class="step-ul">
+                <li>Apri la prima MT5, clicca su <strong>File > Login nel Trade Account</strong> e inserisci le credenziali del conto <strong>PROP</strong>. Ripeti per il conto <strong>HEDGE</strong> sull'altra MT5.</li>
+                <li>Assicurati di selezionare il <strong>Server</strong> esatto per ciascun conto!</li>
+                <li>Ora, su entrambe le piattaforme, clicca in alto su <strong>Strumenti > Opzioni</strong> (o CTRL+O) e vai sulla scheda <strong>Expert Advisor</strong>.</li>
+                <li>Spunta la casella <strong>"Consenti il trading algoritmico"</strong> e clicca OK.</li>
+                <li>Controlla che il pulsante <strong>"Algo Trading"</strong> nella barra superiore sia diventato <span style="color: #4caf50;"><strong>Verde</strong></span>.</li>
+            </ul>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="step-card">
+            <div class="step-number">5</div>
+            <div class="step-title">Collega ArbeXa</div>
+            <div class="step-text">Scarica il software e unisci i due conti tramite la dashboard automatizzata.</div>
+            <ul class="step-ul">
+                <li>Scarica ArbeXa usando il link sottostante.</li>
+                <li>Avvia l'eseguibile e inserisci la tua chiave di licenza.</li>
+                <li>Seleziona i percorsi delle due cartelle MT5 quando richiesto per sincronizzare i terminali.</li>
+            </ul>
+            <a href="/download" class="btn">Scarica ArbeXa</a>
+        </div>
+
+    </div>
+
+    <div class="conclusion-box">
+        <h2>Passaggi Completati! ✅</h2>
+        <p>Una volta finiti questi 5 passaggi, contatta immediatamente il tuo <strong>agente di riferimento</strong>. Ti darà istruzioni precise sulla somma esatta da versare sul conto Hedge e si assicurerà che gli ultimi parametri siano impostati alla perfezione.</p>
+        <p style="margin-top: 15px; font-weight: bold; font-family: 'JetBrains Mono', monospace; font-size: 18px; color: var(--gold-glow);">Buon Guadagno!!! 🚀</p>
+    </div>
+
+</body>
+</html>

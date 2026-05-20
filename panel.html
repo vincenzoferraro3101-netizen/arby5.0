@@ -1,0 +1,2693 @@
+<!DOCTYPE html>
+<html lang="it" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARBEXA Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#030712;--bg2:rgba(15,20,35,0.72);--bg3:rgba(30,38,58,0.55);
+  --border:rgba(212,175,55,0.10);--gold:#d4af37;--gold-dim:rgba(212,175,55,0.5);
+  --emerald:#00FF88;--blue:#4fc3f7;
+  --green:#26a69a;--red:#ef5350;--text:#e2e4ea;--text2:#787b86;--muted:#5a5e6a;
+  --glass:rgba(18,24,42,0.65);--glass-border:rgba(212,175,55,0.12);
+  --glow-gold:0 0 20px rgba(212,175,55,0.15);--glow-emerald:0 0 15px rgba(0,255,136,0.12);
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;
+  background-image:radial-gradient(ellipse at 20% 50%,rgba(212,175,55,0.04) 0%,transparent 50%),
+                   radial-gradient(ellipse at 80% 20%,rgba(0,255,136,0.03) 0%,transparent 50%),
+                   radial-gradient(ellipse at 50% 80%,rgba(79,195,247,0.02) 0%,transparent 50%);}
+
+/* Sidebar Premium */
+.sidebar{width:60px;min-height:100vh;background:rgba(8,12,24,0.92);border-right:1px solid var(--glass-border);
+  display:flex;flex-direction:column;align-items:center;padding:14px 0;position:fixed;left:0;top:0;bottom:0;z-index:100;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.s-logo{color:var(--gold);font-size:16px;font-weight:bold;margin-bottom:24px;
+  filter:drop-shadow(0 0 6px rgba(212,175,55,0.3));}
+.s-item{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;margin:3px 0;font-size:18px;color:var(--text2);transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;}
+.s-item:hover{background:rgba(212,175,55,0.08);color:var(--text);transform:scale(1.05);}
+.s-item.active{background:rgba(212,175,55,0.12);color:var(--gold);box-shadow:inset 0 0 12px rgba(212,175,55,0.08);}
+.s-badge{position:absolute;top:4px;right:4px;background:var(--red);color:#fff;border-radius:50%;
+  width:16px;height:16px;font-size:9px;display:none;align-items:center;justify-content:center;font-weight:bold;
+  box-shadow:0 0 8px rgba(239,83,80,0.4);}
+.s-tip{position:absolute;left:58px;background:rgba(15,20,35,0.95);color:var(--text);padding:5px 12px;
+  border-radius:8px;font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;
+  border:1px solid var(--glass-border);z-index:200;backdrop-filter:blur(12px);font-weight:500;letter-spacing:0.3px;}
+.s-item:hover .s-tip{opacity:1;}
+
+/* Main + Topbar */
+.main{margin-left:60px;flex:1;display:flex;flex-direction:column;}
+.topbar{background:rgba(8,12,24,0.85);border-bottom:1px solid var(--glass-border);padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.tb-title{font-size:15px;font-weight:700;letter-spacing:0.5px;
+  background:linear-gradient(135deg,var(--gold),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.pill{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:4px 14px;font-size:11px;color:var(--gold);font-weight:500;
+  backdrop-filter:blur(8px);}
+.page{display:none;padding:22px;}
+.page.active{display:block;}
+
+/* Login Premium */
+.login-wrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:500;
+  background-image:radial-gradient(ellipse at 50% 40%,rgba(212,175,55,0.06) 0%,transparent 60%);}
+.login-box{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:36px;width:320px;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:var(--glow-gold);}
+.login-title{color:var(--gold);font-size:18px;font-weight:800;text-align:center;margin-bottom:24px;letter-spacing:3px;
+  text-shadow:0 0 20px rgba(212,175,55,0.2);}
+.inp{width:100%;background:rgba(20,26,42,0.7);border:1px solid rgba(212,175,55,0.08);border-radius:10px;
+  padding:12px 14px;color:var(--text);font-size:13px;outline:none;margin-bottom:10px;font-family:'Inter',sans-serif;
+  transition:border-color .25s,box-shadow .25s;}
+.inp:focus{border-color:var(--gold);box-shadow:0 0 12px rgba(212,175,55,0.1);}
+.btn-full{width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;
+  transition:all .25s;font-family:'Inter',sans-serif;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#c8a030);color:#000;box-shadow:0 4px 15px rgba(212,175,55,0.25);}
+.btn-gold:hover{box-shadow:0 6px 25px rgba(212,175,55,0.35);transform:translateY(-1px);}
+.login-err{color:var(--red);font-size:11px;text-align:center;margin-top:6px;min-height:16px;}
+
+/* Grid clienti — Glass Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+.card{background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:16px;cursor:pointer;
+  transition:all .3s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.card:hover{border-color:rgba(212,175,55,0.35);box-shadow:var(--glow-gold);transform:translateY(-2px);}
+.dist-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:16px;
+  backdrop-filter:blur(12px);}
+.card.blocked{border-color:rgba(239,83,80,0.4);opacity:.75;box-shadow:0 0 15px rgba(239,83,80,0.1);}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.color-main-dot{width:14px;height:14px;border-radius:50%;cursor:pointer;flex-shrink:0;transition:all .2s;display:inline-block;}
+.color-main-dot:hover{transform:scale(1.25);box-shadow:0 0 8px rgba(255,255,255,0.15);}
+.color-picker-wrap{display:flex;gap:4px;align-items:center;background:rgba(8,12,24,0.95);border:1px solid var(--glass-border);border-radius:20px;padding:5px 10px;position:absolute;z-index:50;margin-top:2px;
+  backdrop-filter:blur(12px);}
+.color-dot{width:14px;height:14px;border-radius:50%;cursor:pointer;flex-shrink:0;transition:all .2s;}
+.color-dot:hover{transform:scale(1.35);}
+.cid{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;}
+.badges{display:flex;align-items:center;gap:6px;}
+.status{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:500;}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.on{background:var(--emerald);box-shadow:0 0 8px var(--emerald);}
+.off{background:var(--text2);}
+.lic{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600;}
+.lic-ok{background:rgba(0,255,136,0.08);color:var(--emerald);border:1px solid rgba(0,255,136,0.2);}
+.lic-warn{background:rgba(255,184,0,0.08);color:#ffb800;border:1px solid rgba(255,184,0,0.2);}
+.lic-exp{background:rgba(239,83,80,0.08);color:var(--red);}
+.lic-blk{background:rgba(239,83,80,0.08);color:var(--red);border:1px solid rgba(239,83,80,0.2);}
+.trader-preview{background:rgba(20,26,42,0.5);border-radius:10px;padding:10px;margin-top:8px;
+  border:1px solid rgba(212,175,55,0.05);transition:border-color .2s;}
+.trader-preview:hover{border-color:rgba(212,175,55,0.12);}
+.tp-name{color:var(--gold);font-size:11px;font-weight:600;margin-bottom:6px;letter-spacing:0.3px;}
+.tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.tp-item{font-size:11px;}
+.tp-lbl{color:var(--text2);font-size:10px;font-weight:500;}
+.tp-val{font-weight:700;}
+.card-hint{color:var(--text2);font-size:10px;text-align:right;margin-top:8px;font-weight:500;}
+
+/* Tabella */
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:rgba(20,26,42,0.6);color:var(--text2);padding:10px 14px;text-align:left;
+   font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;border-bottom:1px solid var(--glass-border);}
+td{padding:10px 14px;border-bottom:1px solid rgba(212,175,55,0.05);}
+tr:hover td{background:rgba(212,175,55,0.03);}
+.badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600;}
+
+/* Messaggi */
+.thread{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:16px;margin-bottom:10px;
+  backdrop-filter:blur(8px);}
+.thread-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.bubble{padding:9px 14px;border-radius:12px;margin-bottom:5px;font-size:12px;max-width:80%;}
+.bubble-admin{background:rgba(20,26,42,0.6);}
+.bubble-client{background:rgba(79,195,247,0.1);margin-left:auto;border:1px solid rgba(79,195,247,0.15);}
+.bts{font-size:10px;color:var(--text2);}
+.reply-wrap{display:flex;gap:8px;margin-top:8px;}
+.reply-inp{flex:1;background:rgba(20,26,42,0.7);border:1px solid rgba(212,175,55,0.08);border-radius:9px;
+  padding:9px 12px;color:var(--text);font-size:12px;outline:none;font-family:'Inter',sans-serif;}
+.reply-inp:focus{border-color:var(--gold);box-shadow:0 0 10px rgba(212,175,55,0.08);}
+.reply-btn{background:linear-gradient(135deg,var(--gold),#c8a030);color:#000;border:none;border-radius:9px;padding:9px 15px;font-weight:700;cursor:pointer;
+  transition:all .2s;font-family:'Inter',sans-serif;}
+.reply-btn:hover{box-shadow:0 4px 15px rgba(212,175,55,0.25);}
+
+/* Overlay dettaglio — Premium Glass */
+.overlay{position:fixed;inset:0;background:rgba(3,7,18,0.92);z-index:300;display:none;
+  align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);}
+.overlay.open{display:flex;}
+.detail{background:rgba(12,16,30,0.92);border:1px solid var(--glass-border);border-radius:18px;padding:22px;
+  width:100%;max-width:540px;max-height:85vh;overflow-y:auto;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 8px 40px rgba(0,0,0,0.5),var(--glow-gold);}
+.detail::-webkit-scrollbar{width:5px;}.detail::-webkit-scrollbar-track{background:transparent;}.detail::-webkit-scrollbar-thumb{background:rgba(212,175,55,0.2);border-radius:10px;}
+.detail-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.detail-close{background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;transition:color .2s;}
+.detail-close:hover{color:var(--red);}
+.detail-trader{background:rgba(20,26,42,0.5);border-radius:12px;padding:14px;margin-bottom:8px;
+  border:1px solid rgba(212,175,55,0.06);transition:border-color .2s;}
+.detail-trader:hover{border-color:rgba(212,175,55,0.15);}
+.dt-name{color:var(--gold);font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:0.3px;}
+.dt-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;margin-bottom:10px;}
+.dt-lbl{color:var(--text2);font-size:10px;font-weight:500;}
+.dt-val{font-weight:700;}
+.dt-btns{display:flex;gap:6px;}
+.detail-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(212,175,55,0.08);}
+.detail-footer{color:var(--text2);font-size:10px;margin-top:8px;}
+
+/* Bottoni azione — Glass Style */
+.abtn{padding:6px 12px;border-radius:8px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid;
+  transition:all .2s cubic-bezier(.4,0,.2,1);font-family:'Inter',sans-serif;}
+.abtn:hover{opacity:.85;transform:translateY(-1px);}
+.ag{background:rgba(0,255,136,0.06);color:var(--emerald);border-color:rgba(0,255,136,0.25);}
+.ag:hover{box-shadow:var(--glow-emerald);}
+.ar{background:rgba(239,83,80,0.06);color:var(--red);border-color:rgba(239,83,80,0.25);}
+.ar:hover{box-shadow:0 0 12px rgba(239,83,80,0.15);}
+.agold{background:rgba(212,175,55,0.06);color:var(--gold);border-color:rgba(212,175,55,0.25);}
+.agold:hover{box-shadow:var(--glow-gold);}
+.ab{background:rgba(79,195,247,0.06);color:var(--blue);border-color:rgba(79,195,247,0.25);}
+.ap{background:rgba(155,89,182,0.06);color:#9b59b6;border-color:rgba(155,89,182,0.25);}
+.agray{background:var(--bg3);color:var(--text2);border-color:rgba(212,175,55,0.08);}
+
+/* Trade btns — Premium */
+.tbtn{padding:9px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid;flex:1;
+  transition:all .2s;font-family:'Inter',sans-serif;}
+.tbuy{background:rgba(0,255,136,0.06);color:var(--emerald);border-color:rgba(0,255,136,0.3);}
+.tbuy:hover{box-shadow:var(--glow-emerald);background:rgba(0,255,136,0.1);}
+.tsell{background:rgba(239,83,80,0.06);color:var(--red);border-color:rgba(239,83,80,0.3);}
+.tsell:hover{box-shadow:0 0 15px rgba(239,83,80,0.15);background:rgba(239,83,80,0.1);}
+.tpanic{background:rgba(255,0,0,0.06);color:#ff4444;border-color:rgba(255,68,68,0.3);width:100%;padding:10px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid;margin-top:6px;
+  transition:all .2s;font-family:'Inter',sans-serif;}
+.tpanic:hover{box-shadow:0 0 20px rgba(255,68,68,0.2);background:rgba(255,0,0,0.1);}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.75;transform:scale(1.05)}}
+@keyframes goldShimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Modal — Glass */
+.modal-ov{position:fixed;inset:0;background:rgba(3,7,18,0.92);z-index:400;display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);}
+.modal-ov.open{display:flex;}
+.modal{background:rgba(12,16,30,0.92);border:1px solid var(--glass-border);border-radius:16px;padding:24px;width:90%;max-width:400px;
+  backdrop-filter:blur(24px);box-shadow:0 8px 40px rgba(0,0,0,0.5),var(--glow-gold);}
+.modal-title{color:var(--gold);font-size:13px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;letter-spacing:0.5px;}
+.modal-close{background:transparent;border:none;color:var(--text2);font-size:20px;cursor:pointer;transition:color .2s;}
+.modal-close:hover{color:var(--red);}
+.modal-res{font-size:11px;text-align:center;margin-top:8px;min-height:16px;}
+textarea.inp{resize:vertical;}
+
+/* Toolbar */
+.toolbar{display:flex;gap:10px;margin-bottom:18px;align-items:center;flex-wrap:wrap;}
+.search{background:rgba(20,26,42,0.7);border:1px solid rgba(212,175,55,0.08);border-radius:10px;
+  padding:8px 14px;color:var(--text);font-size:12px;outline:none;width:220px;font-family:'Inter',sans-serif;
+  transition:border-color .2s,box-shadow .2s;}
+.search:focus{border-color:var(--gold);box-shadow:0 0 12px rgba(212,175,55,0.08);}
+.tbtn2{padding:7px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid;
+  transition:all .2s;font-family:'Inter',sans-serif;}
+.tbtn2:hover{transform:translateY(-1px);}
+.tbtn2-p{background:rgba(155,89,182,0.08);color:#9b59b6;border-color:rgba(155,89,182,0.3);}
+.empty{color:var(--text2);text-align:center;padding:50px;font-size:13px;font-weight:500;}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <div class="login-title">&#127919; ARBEXA ADMIN</div>
+    <input class="inp" type="password" id="lpw" placeholder="Password admin">
+    <button class="btn-full btn-gold" id="lbtn">ACCEDI</button>
+    <div class="login-err" id="lerr"></div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar" style="display:none">
+  <div class="s-logo">
+    <svg width="32" height="32" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="70" cy="70" r="66" stroke="#d4af37" stroke-width="3" stroke-dasharray="8 4"/>
+      <polygon points="70,20 108,42 108,88 70,110 32,88 32,42" fill="none" stroke="#d4af37" stroke-width="3"/>
+      <text x="70" y="82" text-anchor="middle" fill="#d4af37" font-size="36" font-family="monospace" font-weight="bold">&lt;/&gt;</text>
+    </svg>
+  </div>
+  <div class="s-item active" id="n-dash" onclick="nav('dash')">&#9732;<div class="s-tip">Dashboard</div></div>
+  <div class="s-item" id="n-clienti" onclick="nav('clienti')">&#128101;<div class="s-tip">Clienti</div></div>
+  <div class="s-item" id="n-msg" onclick="nav('msg')">&#9993;<div class="s-tip">Messaggi</div><div class="s-badge" id="msg-badge">0</div></div>
+  <div class="s-item" id="n-scad" onclick="nav('scad')">&#128197;<div class="s-tip">Scadenze</div></div>
+  <div class="s-item" id="n-dist" onclick="nav('dist')">&#128101;<div class="s-tip">Distributori</div></div>
+  <div class="s-item" id="n-archivio" onclick="nav('archivio')">&#128451;<div class="s-tip">Archivio</div></div>
+  <div class="s-item" id="n-download" onclick="nav('download')">&#11015;<div class="s-tip">Download EXE</div></div>
+</div>
+
+<!-- Main -->
+<div class="main" id="main" style="display:none">
+  <div class="topbar">
+    <span class="tb-title" id="pg-title">Dashboard</span>
+    <div class="tb-right">
+      <span class="pill" id="cnt-pill">0 clienti</span>
+      <button class="tbtn2 tbtn2-p" onclick="openModal('modal-all')">&#9993; Invia a tutti</button>
+      <button class="tbtn2" onclick="openQuickMsgs()" style="background:#0d1f3c;border:1px solid var(--gold);color:var(--gold);">⚡ Rapidi</button>
+      <button class="tbtn2" onclick="openAutoMsgs()" style="background:#0d1f3c;border:1px solid #4fc3f7;color:#4fc3f7;">🤖 Automatici</button>
+      <button class="tbtn2" id="btn-refresh" onclick="manualRefresh(this)" style="background:#0d1f3c;border:1px solid var(--green);color:var(--green);">&#8635; Refresh</button>
+    </div>
+  </div>
+
+  <div class="page active" id="pg-dash">
+    <div class="toolbar">
+      <input class="search" id="s-dash" placeholder="&#128269; Cerca ID..." oninput="renderDash()">
+      <button onclick="selectAllCards()" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text2);cursor:pointer;font-size:12px;">&#9745; Tutti</button>
+      <button onclick="deselectAllCards()" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text2);cursor:pointer;font-size:12px;">&#9744; Nessuno</button>
+      <button onclick="openLegend()" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text2);cursor:pointer;font-size:12px;">&#127912; Leggenda</button>
+    </div>
+    <!-- Barra comandi multi-selezione -->
+    <div id="multi-cmd-bar" style="display:none;background:#0d1f3c;border:1px solid var(--gold);border-radius:10px;padding:12px 16px;margin:0 0 12px 0;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span id="multi-sel-count" style="color:var(--gold);font-weight:700;font-size:13px;"></span>
+      <button onclick="multiCmd('buy')" style="background:#0d2b1f;border:1px solid var(--green);border-radius:7px;color:var(--green);font-weight:700;padding:8px 18px;cursor:pointer;">&#9650; BUY</button>
+      <button onclick="multiCmd('sell')" style="background:#2b0d0d;border:1px solid var(--red);border-radius:7px;color:var(--red);font-weight:700;padding:8px 18px;cursor:pointer;">&#9660; SELL</button>
+      <button onclick="multiCmd('panic')" style="background:#1a0000;border:1px solid #ff4444;border-radius:7px;color:#ff4444;font-weight:700;padding:8px 18px;cursor:pointer;">&#9888; PANIC</button>
+      <button onclick="reselectLastGroup()" id="btn-reselect" style="display:none;background:#1a1200;border:1px solid var(--gold);border-radius:7px;color:var(--gold);font-weight:700;padding:8px 14px;cursor:pointer;">&#8635; Riseleziona</button>
+      <button onclick="deselectAllCards()" style="background:none;border:1px solid var(--border);border-radius:7px;color:var(--text2);padding:8px 12px;cursor:pointer;margin-left:auto;">&#10005; Deseleziona</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="page" id="pg-clienti">
+    <div class="toolbar">
+      <input class="search" id="s-cli" placeholder="&#128269; Cerca..." oninput="renderTable()">
+    </div>
+    <table><thead><tr>
+      <th>ID</th><th>Status</th><th>Licenza</th><th>Scadenza</th>
+      <th>Primo accesso</th><th>Ultimo accesso</th><th>Azioni</th>
+    </tr></thead><tbody id="cli-body"></tbody></table>
+  </div>
+
+  <div class="page" id="pg-msg">
+    <div style="max-width:700px;margin:0 auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <span style="color:var(--gold);font-weight:700;font-size:15px;">💬 Messaggi</span>
+        <span style="color:var(--text2);font-size:11px;" id="msg-count"></span>
+      </div>
+      <div id="msg-list"><div class="empty">Nessun messaggio</div></div>
+    </div>
+  </div>
+
+  <div class="page" id="pg-scad">
+    <table><thead><tr>
+      <th>ID</th><th>Status</th><th>Giorni</th><th>Scadenza</th><th>Azioni</th>
+    </tr></thead><tbody id="scad-body"></tbody></table>
+  </div>
+
+  <div class="page" id="pg-dist">
+    <div class="toolbar">
+      <button class="tbtn2 tbtn2-p" onclick="openModal('modal-new-dist')">&#43; Nuovo Distributore</button>
+    </div>
+    <div id="dist-list"><div class="empty">Nessun distributore</div></div>
+  </div>
+
+  <div class="page" id="pg-archivio">
+    <div class="toolbar" style="margin-bottom:14px;">
+      <input class="search" id="s-arch" placeholder="&#128269; Cerca cliente..." oninput="renderArchivio()">
+    </div>
+    <div id="arch-list"><div class="empty">Caricamento...</div></div>
+  </div>
+
+  <div class="page" id="pg-download">
+    <div class="toolbar">
+      <span style="color:var(--gold);font-weight:700;font-size:15px;">&#11015; Gestione EXE</span>
+    </div>
+    <div style="max-width:500px;margin:0 auto;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;">
+        <div style="color:var(--gold);font-weight:700;font-size:13px;margin-bottom:16px;">STATO FILE EXE</div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+          <div id="exe-status-badge" style="padding:6px 18px;border-radius:20px;font-weight:700;font-size:12px;background:#0D3B2A;color:#00FF88;">Caricamento...</div>
+          <div style="color:var(--muted);font-size:12px;" id="exe-download-count">Download: —</div>
+          <button onclick="doResetDownloadCount()" style="background:#1e222d;border:1px solid var(--border);border-radius:6px;padding:4px 10px;color:var(--text2);cursor:pointer;font-size:11px;">↺ Reset</button>
+        </div>
+        <button id="btn-toggle-exe" onclick="toggleExe()"
+          style="width:100%;height:40px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;background:#1A3A5C;color:#fff;">
+          Caricamento...
+        </button>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;">
+        <div style="color:var(--gold);font-weight:700;font-size:13px;margin-bottom:12px;">INFO</div>
+        <div style="color:var(--muted);font-size:12px;line-height:1.8;">
+          • Quando il download è <b style="color:#00FF88">ATTIVO</b>, i clienti possono scaricare l'exe dalla pagina /download<br>
+          • Quando è <b style="color:#FF3355">BLOCCATO</b>, il file non è disponibile<br>
+          • Il contatore mostra i download totali dall'inizio
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay dettaglio cliente -->
+<div class="overlay" id="overlay-detail" onclick="closeDetail(event)">
+  <div class="detail" id="detail-box"></div>
+</div>
+
+<!-- Modal comando con selezione schede -->
+<div class="overlay" id="modal-cmd" onclick="closeCmdModal(event)" style="z-index:310;">
+  <div class="detail" style="max-width:380px;padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <span id="cmd-modal-title" style="font-size:18px;font-weight:700;">COMANDO</span>
+      <button onclick="closeCmdModal(null)" style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;">&#10005;</button>
+    </div>
+    <div id="cmd-modal-body"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button onclick="closeCmdModal(null)" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;">Annulla</button>
+      <button id="cmd-modal-confirm" style="flex:2;padding:10px;border-radius:8px;border:none;background:var(--gold);color:#000;font-weight:700;cursor:pointer;">INVIA</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal leggenda colori -->
+<div class="modal-ov" id="modal-legend" onclick="closeMO(event,'modal-legend')">
+  <div class="modal" style="max-width:320px;">
+    <div class="modal-title">&#127912; Leggenda Colori <button class="modal-close" onclick="closeMO(null,'modal-legend')">&#10005;</button></div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:12px;">Assegna un significato a ogni colore. Viene salvato nel browser.</div>
+    <div id="color-legend-box"></div>
+  </div>
+</div>
+
+<!-- Modal rinnova -->
+<div class="modal-ov" id="modal-ren" onclick="closeMO(event,'modal-ren')">
+  <div class="modal">
+    <div class="modal-title">&#128197; Rinnova Licenza <button class="modal-close" onclick="closeMO(null,'modal-ren')">&#10005;</button></div>
+    <input class="inp" type="password" id="ren-pw" placeholder="Password licenze">
+    <input class="inp" type="number" id="ren-days" value="30" placeholder="Giorni">
+    <button class="btn-full btn-gold" onclick="doRen()">RINNOVA</button>
+    <div class="modal-res" id="ren-res"></div>
+  </div>
+</div>
+
+<!-- Modal chat cliente -->
+<div class="modal-ov" id="modal-chat" onclick="closeMO(event,'modal-chat')" style="z-index:400;">
+  <div class="modal" style="max-width:480px;max-height:80vh;display:flex;flex-direction:column;padding:0;overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);">
+      <div>
+        <span id="chat-modal-title" style="font-size:15px;font-weight:700;color:var(--gold);"></span>
+        <span id="chat-modal-sub" style="font-size:11px;color:var(--text2);margin-left:8px;"></span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="deleteChatConfirm()" style="background:#2A0A0A;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;">🗑 Cancella chat</button>
+        <button class="modal-close" onclick="closeMO(null,'modal-chat')">✕</button>
+      </div>
+    </div>
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;min-height:200px;max-height:400px;"></div>
+    <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--bg2);display:flex;gap:8px;">
+      <input id="chat-reply-inp" class="inp" style="flex:1;margin:0;height:36px;font-size:13px;" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter')sendChatReply()">
+      <button onclick="sendChatReply()" style="background:var(--gold);color:#000;border:none;border-radius:8px;padding:0 18px;font-weight:700;cursor:pointer;font-size:13px;">▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal messaggio -->
+<div class="modal-ov" id="modal-msg" onclick="closeMO(event,'modal-msg')">
+  <div class="modal">
+    <div class="modal-title">&#128172; Messaggio <button class="modal-close" onclick="closeMO(null,'modal-msg')">&#10005;</button></div>
+    <textarea class="inp" id="msg-txt" rows="4" placeholder="Scrivi il messaggio..."></textarea>
+    <button class="btn-full btn-gold" onclick="doMsg()">INVIA</button>
+    <div class="modal-res" id="msg-res"></div>
+  </div>
+</div>
+
+<!-- Modal password -->
+<div class="modal-ov" id="modal-pw" onclick="closeMO(event,'modal-pw')">
+  <div class="modal">
+    <div class="modal-title">&#128272; Reset Password <button class="modal-close" onclick="closeMO(null,'modal-pw')">&#10005;</button></div>
+    <div style="color:var(--text2);font-size:12px;margin-bottom:14px;line-height:1.6;">
+      La password del cliente verrà reimpostata alle <b style="color:var(--gold);">ultime 4 cifre del suo ID</b>.<br>
+      Al prossimo accesso sarà costretto a cambiarla.
+    </div>
+    <button class="btn-full btn-gold" onclick="doPw()">RESET PASSWORD</button>
+    <div class="modal-res" id="pw-res"></div>
+  </div>
+</div>
+
+<!-- Modal parametri remoti -->
+<div class="modal-ov" id="modal-params" onclick="closeMO(event,'modal-params')">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-title">&#9881; Parametri Trading <button class="modal-close" onclick="closeMO(null,'modal-params')">&#10005;</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">SL PROP ($)</div><input class="inp" id="prm-sl" type="number" placeholder="es. 1000"></div>
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">TP HEDGE ($)</div><input class="inp" id="prm-tp" type="number" placeholder="es. 200"></div>
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Distanza punti</div><input class="inp" id="prm-dist" type="number" placeholder="es. 1000"></div>
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Ratio PROP (SL:TP)</div>
+        <select class="inp" id="prm-ratio" style="background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:6px;height:36px;">
+          <option value="1:1">1:1</option>
+          <option value="1:2">1:2</option>
+          <option value="1:3">1:3</option>
+          <option value="1:4">1:4</option>
+          <option value="1:5">1:5</option>
+        </select>
+      </div>
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Scheda (indice)</div><input class="inp" id="prm-idx" type="number" value="0" placeholder="0"></div>
+      <div><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Ratio Automatico</div>
+        <select class="inp" id="prm-auto" style="background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:6px;height:36px;">
+          <option value="1">✅ ON — adatta alla distanza</option>
+          <option value="0">❌ OFF — usa ratio manuale</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-full btn-gold" onclick="doSetParams()">&#9881; INVIA PARAMETRI</button>
+    <div class="modal-res" id="prm-res"></div>
+  </div>
+</div>
+
+<!-- Modal invia a tutti -->
+<div class="modal-ov" id="modal-all" onclick="closeMO(event,'modal-all')">
+  <div class="modal">
+    <div class="modal-title">&#9993; Invia a tutti <button class="modal-close" onclick="closeMO(null,'modal-all')">&#10005;</button></div>
+    <textarea class="inp" id="all-txt" rows="4" placeholder="Messaggio per tutti..."></textarea>
+    <button class="btn-full btn-gold" onclick="doAll()">INVIA A TUTTI</button>
+    <div class="modal-res" id="all-res"></div>
+  </div>
+</div>
+
+<script>
+var APW = "";
+var DB  = {};
+var CUR = "";
+var PAGES = {dash:"Dashboard",clienti:"Clienti",msg:"Messaggi",scad:"Scadenze",dist:"Distributori",archivio:"Archivio",download:"Download EXE"};
+
+function escHtml(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────
+function doLogin(){
+  var pw = document.getElementById("lpw").value;
+  fetch("/api/check_admin",{headers:{"X-Admin-Password":pw}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      APW = pw;
+      document.getElementById("login-wrap").style.display = "none";
+      document.getElementById("sidebar").style.display = "flex";
+      document.getElementById("main").style.display = "flex";
+      load(); loadDist(); loadCardColors(); loadQuickMsgs(); loadAutoMsgs(); setInterval(load,3000); setInterval(loadDist,5000); setInterval(loadCardColors,10000);
+      // Render immediato senza aspettare cambio hash
+      setTimeout(function(){ renderDash(); }, 500);
+    } else {
+      document.getElementById("lerr").textContent = "Password errata";
+    }
+  });
+}
+document.getElementById("lpw").addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
+document.getElementById("lbtn").addEventListener("click", doLogin);
+
+// ── NAV ───────────────────────────────────────────────────────────
+function nav(name){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".s-item").forEach(function(i){i.classList.remove("active");});
+  var pg = document.getElementById("pg-"+name);
+  var ni = document.getElementById("n-"+name);
+  if(pg) pg.classList.add("active");
+  if(ni) ni.classList.add("active");
+  document.getElementById("pg-title").textContent = PAGES[name]||name;
+  if(name==="msg")      renderMsg();
+  if(name==="scad")     renderScad();
+  if(name==="clienti")  renderTable();
+  if(name==="dist")     renderDist();
+  if(name==="archivio") {
+    document.getElementById("arch-list").innerHTML="<div class='empty'>Caricamento...</div>";
+    load();
+  }
+  if(name==="download") startExeRefresh();
+  else stopExeRefresh();
+}
+
+// ── LOAD ──────────────────────────────────────────────────────────
+var _dashHash = "";
+var _firstLoad = true;
+
+function load(){
+  fetch("/api/clients",{headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    // Preserva client_name locale se il server manda stringa vuota
+    Object.keys(d).forEach(function(k){
+      if(!d[k].client_name && DB[k] && DB[k].client_name)
+        d[k].client_name = DB[k].client_name;
+    });
+    DB = d;
+    var keys = Object.keys(d);
+    var on = keys.filter(function(k){return isOn(d[k].last_seen);}).length;
+    document.getElementById("cnt-pill").textContent = on+" online / "+keys.length+" totali";
+    var unr = keys.reduce(function(s,k){return s+(d[k].unread_replies||0);},0);
+    var b = document.getElementById("msg-badge");
+    if(unr>0){b.textContent=unr;b.style.display="flex";}else{b.style.display="none";}
+    var pg = document.querySelector(".page.active");
+    if(!pg) return;
+    var id = pg.id.replace("pg-","");
+    if(id==="dash"){
+      var hd = {};
+      keys.forEach(function(k){
+        var c=d[k], t=(c.traders||[])[0]||{};
+        hd[k]={pb:t.prop_bal,hp:t.hedge_pnl,hb:t.hedge_bal,pp:t.prop_pnl,hpc:t.hedge_pnl_cum,on:isOn(c.last_seen)};
+      });
+      var newHash = JSON.stringify(hd);
+      if(newHash !== _dashHash || _firstLoad){
+        _dashHash=newHash;
+        _firstLoad=false;
+        renderDash();
+      }
+    }
+    else if(id==="clienti")  renderTable();
+    else if(id==="msg")      renderMsg();
+    else if(id==="scad")     renderScad();
+    else if(id==="archivio") renderArchivio();
+    else if(id==="download") startExeRefresh();
+  }).catch(function(){});
+}
+
+function isOn(ls){
+  if(!ls) return false;
+  return (Date.now()-new Date(ls).getTime())<30000;
+}
+
+function fmt(v){
+  v=parseFloat(v)||0;
+  return (v>=0?"+":"")+v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function fmtD(iso){
+  if(!iso) return "—";
+  return iso.replace("T"," ").substring(0,16);
+}
+
+function fmtExp(exp){
+  if(!exp) return "<span style='color:var(--text2);font-size:10px;'>Non impostata</span>";
+  try{
+    var parts=exp.split("-");
+    return parts[2]+"/"+parts[1]+"/"+parts[0];
+  }catch(e){ return exp; }
+}
+
+function licClass(c){
+  if(c.blocked) return "lic-blk";
+  var d=c.license_days||0;
+  return d>7?"lic-ok":d>0?"lic-warn":"lic-exp";
+}
+
+function licText(c){
+  if(c.blocked) return "BLOCCATO";
+  var d=c.license_days||0;
+  return d>0?d+" gg":"SCADUTA";
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────
+// Card già costruite nel DOM — mai ricostruite, solo valori aggiornati
+var _builtCards = {};
+
+var _selectedCids = new Set();
+var _COLORS = ["#ef5350","#ff9800","#ffd600","#66bb6a","#26a69a","#42a5f5","#ab47bc","#ec407a"];
+var _lastCmdGroup = []; // ultimo gruppo di clienti comandati
+var _cardColors = {};
+var _colorLegend = {};
+
+function loadCardColors(){
+  fetch("/api/card_colors",{headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(!d.ok) return;
+    _cardColors = d.colors||{};
+    _colorLegend = d.legend||{};
+    Object.keys(_cardColors).forEach(function(cid){
+      var card=document.getElementById("card-"+cid);
+      var dot=document.getElementById("cdot-"+cid);
+      var col=_cardColors[cid];
+      if(card) card.style.borderColor=col;
+      if(dot){dot.style.background=col;dot.style.border="";}
+    });
+  });
+}
+
+function toggleColorPicker(cid, e){
+  e.stopPropagation();
+  // Chiudi tutti gli altri
+  document.querySelectorAll(".color-picker-wrap").forEach(function(w){
+    if(w.id !== "cpick-"+cid) w.style.display="none";
+  });
+  var pick = document.getElementById("cpick-"+cid);
+  if(pick) pick.style.display = pick.style.display==="none" ? "flex" : "none";
+  // Chiudi al click fuori
+  setTimeout(function(){
+    document.addEventListener("click", function _close(){
+      if(pick) pick.style.display="none";
+      document.removeEventListener("click", _close);
+    });
+  }, 10);
+}
+
+function setCardColor(cid, color, e){
+  e.stopPropagation();
+  _cardColors[cid] = color;
+  // salva su server
+  fetch("/api/set_card_color/"+cid,{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Password":APW},body:JSON.stringify({color:color})});
+  // Aggiorna bordo card
+  var card = document.getElementById("card-"+cid);
+  if(card) card.style.borderColor = color || "";
+  // Aggiorna pallino
+  var dot = document.getElementById("cdot-"+cid);
+  if(dot){
+    dot.style.background = color || "#2a2e39";
+    dot.style.border = color ? "" : "1px solid #3a3e49";
+  }
+  // Chiudi picker
+  var pick = document.getElementById("cpick-"+cid);
+  if(pick) pick.style.display="none";
+}
+
+function renderLegend(){
+  var box = document.getElementById("color-legend-box");
+  if(!box) return;
+  var h = "";
+  _COLORS.forEach(function(col){
+    var label = _colorLegend[col]||"";
+    h += "<div style='display:flex;align-items:center;gap:8px;margin-bottom:6px;'>";
+    h += "<span style='width:16px;height:16px;border-radius:50%;background:"+col+";flex-shrink:0;'></span>";
+    h += "<input value='"+escHtml(label)+"' placeholder='Significato...' ";
+    h += "style='flex:1;background:#1e222d;border:1px solid #2a2e39;border-radius:6px;padding:4px 8px;color:#d1d4dc;font-size:12px;' ";
+    h += "onchange='saveLegend(\""+col+"\",this.value)'>";
+    h += "</div>";
+  });
+  box.innerHTML = h;
+}
+
+function saveLegend(color, label){
+  _colorLegend[color] = label;
+  fetch("/api/set_color_legend",{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Password":APW},body:JSON.stringify({color:color,label:label})});
+}
+
+function openLegend(){
+  renderLegend();
+  openModal("modal-legend");
+}
+
+function toggleCardSelect(cid, e){
+  e.stopPropagation();
+  if(_selectedCids.has(cid)){
+    _selectedCids.delete(cid);
+  } else {
+    _selectedCids.add(cid);
+  }
+  updateMultiBar();
+}
+
+function selectAllCards(){
+  Object.keys(DB).forEach(function(cid){
+    _selectedCids.add(cid);
+    var chk = document.getElementById("chk-"+cid);
+    if(chk) chk.checked = true;
+  });
+  updateMultiBar();
+}
+
+function deselectAllCards(){
+  _selectedCids.forEach(function(cid){
+    var chk = document.getElementById("chk-"+cid);
+    if(chk) chk.checked = false;
+  });
+  _selectedCids.clear();
+  var rb = document.getElementById("btn-reselect");
+  if(rb) rb.style.display="none";
+  updateMultiBar();
+}
+
+function updateMultiBar(){
+  var bar = document.getElementById("multi-cmd-bar");
+  var cnt = document.getElementById("multi-sel-count");
+  var n = _selectedCids.size;
+  if(n > 0){
+    bar.style.display = "flex";
+    cnt.textContent = n + " client" + (n===1?"e":"i") + " selezionat" + (n===1?"o":"i");
+  } else {
+    bar.style.display = "none";
+  }
+}
+
+function multiCmd(cmd){
+  if(!_selectedCids.size) return;
+  var labels = {buy:"BUY ▲",sell:"SELL ▼",panic:"⚠ PANIC"};
+  var colors  = {buy:"#26a69a",sell:"#ef5350",panic:"#ff4444"};
+  var n = _selectedCids.size;
+  if(!confirm("Inviare "+labels[cmd]+" a "+n+" client"+(n===1?"e":"i")+" con 32s di intervallo?")) return;
+  var cids = Array.from(_selectedCids);
+  _lastCmdGroup = cids.slice(); // salva gruppo
+  deselectAllCards();
+
+  // Mostra badge "In coda" su tutte le card
+  cids.forEach(function(cid, i){
+    _setCmdBadge(cid, i===0 ? "🔄 Invio..." : "⏳ "+(i*32)+"s", i===0 ? colors[cmd] : "#b8941f");
+  });
+
+  cids.forEach(function(cid, i){
+    var delay = i * 32000;
+    // Aggiorna badge a "Inviando" 2s prima
+    if(i > 0){
+      setTimeout(function(){
+        _setCmdBadge(cid, "🔄 Invio...", colors[cmd]);
+      }, delay - 2000);
+    }
+    setTimeout(function(){
+      fetch("/api/command/"+cid,{
+        method:"POST",
+        headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+        body:JSON.stringify({command:cmd, trader_index:null})
+      }).then(function(){
+        _setCmdBadge(cid, "✅ "+labels[cmd], colors[cmd]);
+        // Rimuovi badge dopo 8 secondi
+        setTimeout(function(){ _removeCmdBadge(cid); }, 8000);
+      });
+    }, delay);
+  });
+
+  // Countdown nella barra
+  var bar = document.getElementById("multi-cmd-bar");
+  var cnt = document.getElementById("multi-sel-count");
+  bar.style.display = "flex";
+  var elapsed = 0;
+  var timer = setInterval(function(){
+    elapsed++;
+    var sent = Math.min(Math.floor(elapsed / 32) + 1, n);
+    var nextIn = 32 - (elapsed % 32);
+    if(sent < n){
+      cnt.textContent = "✅ "+sent+"/"+n+" inviati — prossimo tra "+nextIn+"s";
+    } else {
+      cnt.textContent = "✅ Tutti i comandi inviati";
+      var rb = document.getElementById("btn-reselect");
+      if(rb) rb.style.display="inline-flex";
+      clearInterval(timer);
+    }
+    cnt.style.color = "var(--gold)";
+  }, 1000);
+}
+
+function _setCmdBadge(cid, text, color){
+  var card = document.getElementById("card-"+cid);
+  if(!card) return;
+  var badge = document.getElementById("cmdbadge-"+cid);
+  if(!badge){
+    badge = document.createElement("div");
+    badge.id = "cmdbadge-"+cid;
+    badge.style.cssText = "position:absolute;top:8px;right:8px;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;z-index:10;animation:pulse 1.2s infinite;";
+    card.style.position = "relative";
+    card.appendChild(badge);
+  }
+  badge.textContent = text;
+  badge.style.background = color;
+  badge.style.color = "#000";
+}
+
+function reselectLastGroup(){
+  if(!_lastCmdGroup.length) return;
+  deselectAllCards();
+  _lastCmdGroup.forEach(function(cid){
+    _selectedCids.add(cid);
+    var chk = document.getElementById("chk-"+cid);
+    if(chk) chk.checked = true;
+  });
+  updateMultiBar();
+}
+
+function _removeCmdBadge(cid){
+  var badge = document.getElementById("cmdbadge-"+cid);
+  if(badge) badge.remove();
+}
+
+function _buildCard(cid, num){
+  var c = DB[cid];
+  var traders = c.traders||[];
+  var el = document.createElement("div");
+  el.className = "card";
+  el.id = "card-"+cid;
+  el.setAttribute("data-cid", cid);
+  el.addEventListener("click", function(e){
+    if(e.target.type==="checkbox") return;
+    if(e.target.classList.contains("color-main-dot")) return;
+    if(e.target.classList.contains("color-dot")) return;
+    if(e.target.closest(".color-picker-wrap")) return;
+    openDetail(cid);
+  });
+  // Colore bordo card
+  var cardColor = _cardColors[cid] || "";
+  if(cardColor) el.style.borderColor = cardColor;
+  var h = "<div class='card-head'>";
+  h += "<input type='checkbox' id='chk-"+cid+"' onclick='toggleCardSelect(\""+cid+"\",event)' style='width:16px;height:16px;margin-right:8px;cursor:pointer;accent-color:var(--gold);'>";
+  h += "<span style='background:var(--gold);color:#000;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:900;margin-right:6px;'>#"+(num||"")+"</span>";
+  h += "<span class='cid'>"+escHtml(cid)+"</span>";
+  if(c.client_name) h += "<span style='color:var(--text2);font-size:10px;margin-left:6px;'>"+escHtml(c.client_name)+"</span>";
+  h += "<div class='badges'>";
+  h += "<span id='st-"+cid+"' class='status'><span class='dot off'></span>offline</span>";
+  h += "<span id='lic-"+cid+"' class='lic'></span>";
+  h += "</div></div>";
+  traders.forEach(function(t,i){
+    var tid = cid+"-"+i;
+    h += "<div class='trader-preview' style='position:relative;' id='tp-"+tid+"'>";
+    h += "<div id='stamp-"+tid+"' style='display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);border:3px solid #00FF88;border-radius:6px;padding:4px 10px;font-size:13px;font-weight:900;letter-spacing:2px;opacity:.85;pointer-events:none;white-space:nowrap;z-index:2;'></div>";
+    h += "<div class='tp-name'>"+escHtml(t.prop_firm||"Scheda "+(i+1))+"</div>";
+    h += "<div class='tp-grid'>";
+    h += "<div class='tp-item'><div class='tp-lbl'>PROP BAL</div><div class='tp-val' id='pb-"+tid+"'>—</div></div>";
+    h += "<div class='tp-item'><div class='tp-lbl'>HEDGE BAL</div><div class='tp-val' id='hb-"+tid+"'>—</div></div>";
+    h += "<div class='tp-item'><div class='tp-lbl'>PROP P&L</div><div class='tp-val' id='pp-"+tid+"'>—</div></div>";
+    h += "<div class='tp-item'><div class='tp-lbl'>HEDGE P&L</div><div class='tp-val' id='hp-"+tid+"'>—</div></div>";
+    h += "<div class='tp-item'><div class='tp-lbl'>HEDGE Cumulativo</div><div class='tp-val' id='hc-"+tid+"'>—</div></div>";
+    h += "<div class='tp-item'><div class='tp-lbl'>Lotti HEDGE</div><div class='tp-val' id='hl-"+tid+"' style='color:var(--gold);'>—</div></div>";
+    h += "<div class='tp-item'><div class='tp-lbl'>HEDGE Cum. Admin</div><div class='tp-val' id='hca-"+tid+"' style='color:var(--gold);'>—</div></div>";
+    h += "<div class='tp-item'><div class='tp-lbl'>Lotti Cum. Admin</div><div class='tp-val' id='hla-"+tid+"' style='color:var(--gold);'>—</div></div>";
+    h += "<div class='tp-item' style='grid-column:1/-1;margin-top:4px;'><div id='ls-"+tid+"' style='font-size:10px;padding:3px 7px;border-radius:5px;background:var(--bg3);color:var(--text2);display:none;'></div></div>";
+    h += "</div></div>";
+  });
+  // Footer card — pallino colore in basso a sinistra
+  var dotStyle = cardColor ? "background:"+cardColor+";" : "background:#2a2e39;border:1px solid #3a3e49;";
+  h += "<div style='display:flex;align-items:center;justify-content:space-between;margin-top:8px;position:relative;'>";
+  h += "<div style='position:relative;'>";
+  h += "<span class='color-main-dot' id='cdot-"+cid+"' style='"+dotStyle+"' onclick='toggleColorPicker(\""+cid+"\",event)' title='Colore scheda'></span>";
+  h += "<div class='color-picker-wrap' id='cpick-"+cid+"' style='display:none;bottom:22px;left:0;position:absolute;'>";
+  _COLORS.forEach(function(col){
+    h += "<span class='color-dot' style='background:"+col+";' onclick='setCardColor(\""+cid+"\",\""+col+"\",event)'></span>";
+  });
+  h += "<span class='color-dot' style='background:#1e222d;border:1px solid #555;font-size:9px;line-height:14px;text-align:center;color:#888;' onclick='setCardColor(\""+cid+"\",\"\",event)'>✕</span>";
+  h += "</div></div>";
+  h += "<div class='card-hint'>Clicca per dettagli &#8250;</div>";
+  h += "</div>";
+  el.innerHTML = h;
+  return el;
+}
+
+function renderDash(){
+  var keys = Object.keys(DB);
+  var q = (document.getElementById("s-dash").value||"").toLowerCase();
+  if(q) keys = keys.filter(function(k){return k.toLowerCase().includes(q);});
+  keys.sort(function(a,b){
+    var ao=isOn(DB[a].last_seen)?1:0, bo=isOn(DB[b].last_seen)?1:0;
+    return bo-ao||a.localeCompare(b);
+  });
+  var g = document.getElementById("grid");
+  if(!keys.length){
+    g.innerHTML="<div class='empty'>Nessun cliente</div>";
+    _builtCards={};
+    return;
+  }
+
+  // 1. Crea card mancanti o RE-CREA se il numero di traders è cambiato
+  var num = 0;
+  keys.forEach(function(cid){
+    num++;
+    var c = DB[cid];
+    var currentTradersLen = (c.traders || []).length;
+    var el = document.getElementById("card-"+cid);
+    
+    if(el) {
+       var previewCount = el.querySelectorAll(".trader-preview").length;
+       if(previewCount !== currentTradersLen) {
+           el.remove();
+           _builtCards[cid] = false;
+       }
+    }
+
+    if(!_builtCards[cid]){
+      _builtCards[cid] = true;
+      g.appendChild(_buildCard(cid, num));
+    }
+  });
+
+  // 2. Rimuovi card di clienti non più presenti
+  Object.keys(_builtCards).forEach(function(cid){
+    if(keys.indexOf(cid)===-1){
+      var el = document.getElementById("card-"+cid);
+      if(el) el.remove();
+      delete _builtCards[cid];
+    }
+  });
+
+  // 3. Aggiorna solo i valori tramite ID
+  keys.forEach(function(cid){
+    var c = DB[cid];
+    var cardEl = document.getElementById("card-"+cid);
+    if(!cardEl) return;
+    cardEl.className = "card"+(c.blocked?" blocked":"");
+    var online = isOn(c.last_seen);
+    var stEl = document.getElementById("st-"+cid);
+    if(stEl) stEl.innerHTML = "<span class='dot "+(online?"on":"off")+"'></span>"+(online?"LIVE":"offline");
+    var licEl = document.getElementById("lic-"+cid);
+    if(licEl){ licEl.textContent=licText(c); licEl.className="lic "+licClass(c); }
+
+    (c.traders||[]).forEach(function(t,i){
+      var tid = cid+"-"+i;
+      var pb=parseFloat(t.prop_bal)||0, hb=parseFloat(t.hedge_bal)||0;
+      var pp=parseFloat(t.prop_pnl)||0, hp=parseFloat(t.hedge_pnl)||0;
+      var hcum=parseFloat(t.hedge_pnl_cum)||0;
+      var hlots=parseFloat(t.hedge_lots_cum)||0;
+      var size=parseFloat(t.size)||0;
+      var stamp="";
+      if(size>0 && pb>=size*(1+(parseFloat(t.target_pct)||10)/100)) stamp="PASSATA";
+      else if(size>0 && pb<=size*(1-(parseFloat(t.dd_totale_pct)||10)/100)&&pb>0) stamp="BRUCIATA";
+
+      function sv(id,val,color){
+        var e=document.getElementById(id);
+        if(e){e.textContent=val; if(color)e.style.color=color; else e.style.color="";}
+      }
+      sv("pb-"+tid,"$"+pb.toLocaleString("it-IT",{minimumFractionDigits:2}));
+      sv("hb-"+tid,"$"+hb.toLocaleString("it-IT",{minimumFractionDigits:2}));
+      sv("pp-"+tid,fmt(pp),pp>=0?"var(--green)":"var(--red)");
+      // last_status
+      var lsEl = document.getElementById("ls-"+tid);
+      if(lsEl){
+        var ls = t.last_status||""; var lsc = t.last_status_color||"gold"; var lst = t.last_status_ts||"";
+        if(ls){
+          var colorMap={green:"var(--green)",red:"var(--red)",gold:"var(--gold)",gray:"var(--text2)",white:"var(--text)"};
+          lsEl.style.display="block";
+          lsEl.style.color=colorMap[lsc]||"var(--gold)";
+          lsEl.textContent=(lst?"["+lst+"] ":"")+ls;
+        } else { lsEl.style.display="none"; }
+      }
+      sv("hp-"+tid,fmt(hp),hp>=0?"var(--green)":"var(--red)");
+      sv("hc-"+tid,fmt(hcum),hcum>=0?"var(--green)":"var(--red)");
+      var hlots=parseFloat(t.hedge_lots_cum)||0;
+      sv("hl-"+tid,hlots.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}),"var(--gold)");
+      var hca=parseFloat(t.admin_cumulative_hedge)||0;
+      var hla=parseFloat(t.admin_cumulative_lots)||0;
+      sv("hca-"+tid,fmt(hca),hca>=0?"var(--green)":"var(--red)");
+      sv("hla-"+tid,hla.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}),"var(--gold)");
+
+      var stampEl=document.getElementById("stamp-"+tid);
+      if(stampEl){
+        if(stamp){
+          var sc=stamp==="PASSATA"?"#00FF88":"#FF3355";
+          stampEl.style.display="block";
+          stampEl.style.color=sc;
+          stampEl.style.borderColor=sc;
+          stampEl.textContent=stamp;
+        } else {
+          stampEl.style.display="none";
+          stampEl.textContent="";
+        }
+      }
+    });
+  });
+}
+
+// ── DETTAGLIO ─────────────────────────────────────────────────────
+function openDetail(cid){
+  CUR = cid;
+  var c = DB[cid];
+  if(!c) return;
+  var online = isOn(c.last_seen);
+  var traders = c.traders||[];
+  var box = document.getElementById("detail-box");
+  var h = "";
+
+  // Header con nome cliente
+  h += "<div class='detail-head'>";
+  h += "<div><div style='color:var(--gold);font-size:13px;font-weight:700;'>&#9670; "+escHtml(cid)+"</div>";
+  if(c.client_name) h += "<div style='color:var(--text);font-size:12px;margin-top:2px;'>"+escHtml(c.client_name)+"</div>";
+  h += "<div style='display:flex;gap:6px;margin-top:4px;'>";
+  h += "<span class='status'><span class='dot "+(online?"on":"off")+"'></span>"+(online?"LIVE":"offline")+"</span>";
+  h += "<span class='lic "+licClass(c)+"'>"+licText(c)+"</span>";
+  h += "</div></div>";
+  h += "<button class='detail-close' onclick='closeDetail()'>&#10005;</button></div>";
+
+  // Traders con pulsanti trading
+  traders.forEach(function(t,i){
+    var pb=parseFloat(t.prop_bal)||0, hb=parseFloat(t.hedge_bal)||0;
+    var pos=t.positions||0;
+    // Cumulativo top-level
+    var ppCum, hpCum;
+    var propCumList  = c.prop_cumulative  || [];
+    var hedgeCumList = c.hedge_cumulative || [];
+    if(!propCumList.length && !hedgeCumList.length){
+      var cum = t.trades_cumulative||t.ea_trades||[];
+      propCumList  = cum.filter(function(tr){return tr.conto==='PROP';});
+      hedgeCumList = cum.filter(function(tr){return tr.conto==='HEDGE';});
+    }
+    ppCum = propCumList.reduce(function(s,tr){return s+parseFloat(tr.profit||0);},0);
+    hpCum = hedgeCumList.reduce(function(s,tr){return s+parseFloat(tr.profit||0);},0);
+    var ppLive = ppCum + (parseFloat(t.prop_pnl)||0);
+    var hpLive = hpCum + (parseFloat(t.hedge_pnl)||0);
+    h += "<div class='detail-trader'>";
+    h += "<div class='dt-name'>"+escHtml(t.prop_firm||"Scheda "+(i+1))+" &mdash; $"+(t.size||0).toLocaleString()+"</div>";
+    h += "<div class='dt-grid'>";
+    h += "<div><div class='dt-lbl'>PROP BAL</div><div class='dt-val'>$"+pb.toLocaleString("it-IT",{minimumFractionDigits:2})+"</div></div>";
+    h += "<div><div class='dt-lbl'>HEDGE BAL</div><div class='dt-val'>$"+hb.toLocaleString("it-IT",{minimumFractionDigits:2})+"</div></div>";
+    h += "<div><div class='dt-lbl'>PROP P&L</div><div class='dt-val' style='color:"+(ppLive>=0?"var(--green)":"var(--red)")+"'>"+fmt(ppLive)+"</div></div>";
+    h += "<div><div class='dt-lbl'>HEDGE P&L</div><div class='dt-val' style='color:"+(hpLive>=0?"var(--green)":"var(--red)")+"'>"+fmt(hpLive)+"</div></div>";
+    var hcum = parseFloat(t.hedge_pnl_cum)||0;
+    h += "<div><div class='dt-lbl'>HEDGE Cumulativo</div><div class='dt-val' style='color:"+(hcum>=0?"var(--green)":"var(--red)")+"'>"+fmt(hcum)+"</div></div>";
+    var hlots = parseFloat(t.hedge_lots_cum)||0;
+    h += "<div><div class='dt-lbl'>Lotti HEDGE</div><div class='dt-val' style='color:var(--gold);'>"+hlots.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2})+"</div></div>";
+    var hca = parseFloat(t.admin_cumulative_hedge)||0;
+    var hla = parseFloat(t.admin_cumulative_lots)||0;
+    h += "<div><div class='dt-lbl'>HEDGE Cum. Admin</div><div class='dt-val' style='color:"+(hca>=0?"var(--green)":"var(--red)")+"'>"+fmt(hca)+"</div></div>";
+    h += "<div><div class='dt-lbl'>Lotti Cum. Admin</div><div class='dt-val' style='color:var(--gold);'>"+hla.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2})+"</div></div>";
+    h += "<div><div class='dt-lbl'>Posizioni aperte</div><div class='dt-val'>"+pos+"</div></div>";
+    h += "</div>";
+    // Broker e conto MT5
+    var propAcc = t.prop_account||""; var propBrk = t.prop_broker||"";
+    var hedgeAcc = t.hedge_account||""; var hedgeBrk = t.hedge_broker||"";
+    if(propAcc||propBrk||hedgeAcc||hedgeBrk){
+      h += "<div style='background:var(--bg3);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;'>";
+      if(propBrk||propAcc) h += "<div style='margin-bottom:4px;'><span style='color:var(--text2);'>PROP: </span><span style='color:var(--green);font-weight:600;'>"+escHtml(propBrk)+"</span>"+(propAcc?" <span style='color:var(--text2);'>conto</span> <span style='color:var(--gold);font-family:monospace;'>"+propAcc+"</span>":"")+"</div>";
+      if(hedgeBrk||hedgeAcc) h += "<div><span style='color:var(--text2);'>HEDGE: </span><span style='color:var(--blue);font-weight:600;'>"+escHtml(hedgeBrk)+"</span>"+(hedgeAcc?" <span style='color:var(--text2);'>conto</span> <span style='color:var(--gold);font-family:monospace;'>"+hedgeAcc+"</span>":"")+"</div>";
+      h += "</div>";
+    }
+    h += "<div class='dt-btns'>";
+    h += "<button class='tbtn tbuy' onclick='openCmdModal(\"buy\")'>&#9650; BUY</button>";
+    h += "<button class='tbtn tsell' onclick='openCmdModal(\"sell\")'>&#9660; SELL</button>";
+    h += "</div>";
+    h += "<button class='tpanic' onclick='openCmdModal(\"panic\")'>&#9888; PANIC</button>";
+    // Tasti Azione Scheda (Elimina & Reset Hedge Admin)
+    h += "<div style='display:flex;gap:6px;margin-top:6px;'>";
+    h += "<button onclick='resetAdminHedge(\""+cid+"\","+i+")' style='flex:1;padding:8px;border-radius:7px;border:1px solid var(--gold);background:#1a1500;color:var(--gold);font-size:11px;font-weight:700;cursor:pointer;'>↺ RESET HEDGE</button>";
+    h += "<button onclick='deleteTrader(\""+cid+"\","+i+")' style='flex:1;padding:8px;border-radius:7px;border:1px solid var(--red);background:#1a0000;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;'>&#128465; ELIMINA SCHEDA</button>";
+    h += "</div>";
+    // Tasto ARCHIVIA se PASSATA o BRUCIATA
+    var sz2=parseFloat(t.size)||0, pb2=parseFloat(t.prop_bal)||0;
+    var tgtBal2=sz2*(1+(parseFloat(t.target_pct)||10)/100);
+    var ddBal2=sz2*(1-(parseFloat(t.dd_totale_pct)||10)/100);
+    var esito2="";
+    if(sz2>0 && pb2>=tgtBal2) esito2="PASSATA";
+    else if(sz2>0 && pb2<=ddBal2 && pb2>0) esito2="BRUCIATA";
+    if(esito2){
+      var sc3=esito2==="PASSATA"?"var(--green)":"var(--red)";
+      h += "<button class='abtn' style='width:100%;margin-top:6px;background:transparent;border:1px solid "+sc3+";color:"+sc3+";font-weight:700;' onclick='archiviaScheda(\""+cid+"\","+i+",\""+esito2+"\")' title='Archivia questa scheda come "+esito2+"'>&#128451; "+esito2+"</button>";
+    }
+    h += "</div>";
+  });
+
+  // Notifiche Telegram Section
+  var nAdmin = c.notify_admin_telegram ? "checked" : "";
+  var nDist = c.notify_distributor_telegram ? "checked" : "";
+  h += "<div style='margin-top:14px;border-top:1px solid var(--border);padding-top:12px;width:100%;'>";
+  h += "<div style='font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;'>📲 Notifiche Telegram (Operazioni & Recap)</div>";
+  h += "<div style='background:var(--bg3);border-radius:8px;padding:10px;font-size:12px;display:flex;flex-direction:column;gap:8px;'>";
+  h += "<label style='display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--text);'>";
+  h += "<input type='checkbox' id='tg-alert-admin' "+nAdmin+" onchange='toggleTgAlerts(\""+cid+"\",\"admin\")' style='width:16px;height:16px;accent-color:var(--gold);cursor:pointer;'>";
+  h += "Invia notifiche ad Admin per questo cliente</label>";
+  h += "<label style='display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--text);'>";
+  h += "<input type='checkbox' id='tg-alert-dist' "+nDist+" onchange='toggleTgAlerts(\""+cid+"\",\"distributor\")' style='width:16px;height:16px;accent-color:var(--gold);cursor:pointer;'>";
+  h += "Invia notifiche al Distributore per questo cliente</label>";
+  h += "</div></div>";
+
+  // Azioni admin
+  h += "<div class='detail-actions'>";
+  h += "<button class='abtn agold' onclick='openModal(\"modal-ren\")'>&#128197; RINNOVA</button>";
+  h += "<button class='abtn ap' onclick='openModal(\"modal-gen\")'>&#128273; GENERA CODICE</button>";
+  h += "<button class='abtn ap' onclick='openModal(\"modal-msg\")' title='Messaggio'>&#128172;</button>";
+  h += "<button class='abtn agold' onclick='openModal(\"modal-pw\")'>&#128272; RESET PW</button>";
+  h += "<button class='abtn' onclick='resetFingerprint()' style='background:#1a0a2a;border:1px solid #9b59b6;color:#9b59b6;'>&#128187; RESET PC</button>";
+  h += "<button class='abtn ab' onclick='doResetFp()'>&#128187; RESET PC</button>";
+  h += "<button class='abtn agold' onclick='openModal(\"modal-name\")' title='Modifica Nome'>&#9998;</button>";
+  h += "<button class='abtn ap' onclick='openParamsModal()'>&#9881; PARAMETRI</button>";
+  h += "<button class='abtn ar' onclick='doResetTotals()'>&#8635; RESET TOTALI</button>";
+  h += "<button class='abtn agold' onclick='doResetHedgeLots()'>&#8635; RESET LOTTI</button>";
+  if(c.blocked){
+    h += "<button class='abtn ag' onclick='doBlock(false)'>&#9745; SBLOCCA</button>";
+  } else {
+    h += "<button class='abtn ar' onclick='doBlock(true)'>&#9940; BLOCCA</button>";
+  }
+  if(c.is_admin){
+    h += "<button class='abtn' onclick='doToggleAdmin(false)' style='background:#1a2a0a;border:1px solid #26a69a;color:#26a69a;'>&#11088; ADMIN ✓</button>";
+  } else {
+    h += "<button class='abtn' onclick='doToggleAdmin(true)' style='background:#0a1a1a;border:1px solid var(--text2);color:var(--text2);'>&#11088; SET ADMIN</button>";
+  }
+  h += "<button class='abtn agray' onclick='doDel()'>&#128465; ELIMINA</button>";
+  h += "</div>";
+  h += "<div class='detail-footer'>Primo accesso: "+fmtD(c.first_seen)+" &nbsp;|&nbsp; Ultimo: "+fmtD(c.last_seen)+"</div>";
+
+  // Storico — due riquadri separati PROP | HEDGE con contatore cumulativo
+  var propCumAll  = c.prop_cumulative  || [];
+  var hedgeCumAll = c.hedge_cumulative || [];
+  if(!propCumAll.length && !hedgeCumAll.length){
+    traders.forEach(function(t){
+      var cum = t.trades_cumulative||t.ea_trades||[];
+      cum.forEach(function(tr){
+        if(tr.conto==='PROP') propCumAll.push(tr);
+        else hedgeCumAll.push(tr);
+      });
+    });
+  }
+  var allTrades = propCumAll.concat(hedgeCumAll);
+  if(allTrades.length){
+    var propTrades  = allTrades.filter(function(t){return t.conto==="PROP";});
+    var hedgeTrades = allTrades.filter(function(t){return t.conto==="HEDGE";});
+    // Ordina per data+orario crescente per il contatore
+    function sortTrades(arr){
+      return arr.slice().sort(function(a,b){
+        var da=(a.date||"")+" "+(a.close_time||"");
+        var db=(b.date||"")+" "+(b.close_time||"");
+        return da>db?1:da<db?-1:0;
+      });
+    }
+    function buildBox(trades, label, color){
+      var sorted = sortTrades(trades);
+      var total = 0;
+      var bh = "<div style='flex:1;min-width:0;'>";
+      bh += "<div style='font-size:10px;font-weight:700;color:"+color+";text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);'>"+label+" ("+trades.length+")</div>";
+      if(!sorted.length){ bh += "<div style='color:var(--text2);font-size:11px;text-align:center;padding:12px;'>—</div>"; }
+      else {
+        sorted.forEach(function(tr){
+          var p = parseFloat(tr.profit)||0;
+          total += p;
+          bh += "<div style='display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;'>";
+          bh += "<div><div style='color:var(--text2);font-size:9px;'>"+(tr.date||"—")+" "+(tr.close_time||"")+"</div>";
+          bh += "<div style='color:"+(p>=0?"var(--green)":"var(--red)")+"'>"+fmt(p)+"</div></div>";
+          bh += "<div style='text-align:right;'><div style='color:var(--text2);font-size:9px;'>TOT</div>";
+          bh += "<div style='font-weight:700;color:"+(total>=0?"var(--green)":"var(--red)")+"'>"+fmt(total)+"</div></div>";
+          bh += "</div>";
+        });
+      }
+      bh += "</div>";
+      return bh;
+    }
+    h += "<div style='margin-top:14px;border-top:1px solid var(--border);padding-top:12px;'>";
+    h += "<div style='font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;'>&#128202; Storico Cumulativo</div>";
+    h += "<div style='display:flex;gap:12px;align-items:flex-start;'>";
+    h += buildBox(propTrades,  "PROP",  "#d4af37");
+    h += buildBox(hedgeTrades, "HEDGE", "#4fc3f7");
+    h += "</div></div>";
+  }
+
+  box.innerHTML = h;
+  document.getElementById("overlay-detail").classList.add("open");
+  // Carica archivio
+  loadArchive(cid);
+}
+
+function cmdFromBtn(btn){
+  var cid = btn.getAttribute("data-cid");
+  var cmd = btn.getAttribute("data-cmd");
+  var idx = parseInt(btn.getAttribute("data-idx"));
+  var labels = {buy:"BUY",sell:"SELL",panic:"PANIC"};
+  if(!confirm("Inviare "+labels[cmd]+" a "+cid+"?")) return;
+  fetch("/api/command/"+cid,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({command:cmd,trader_index:idx})
+  });
+}
+
+function deleteTrader(cid, idx){
+  if(!confirm("Eliminare la scheda #"+(idx+1)+" del cliente "+cid+"?\nQuesta operazione non può essere annullata.")) return;
+  fetch("/api/delete_trader/"+cid+"/"+idx,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      load();
+      closeDetail(null);
+    } else {
+      alert("Errore: "+(d.error||"impossibile eliminare la scheda"));
+    }
+  });
+}
+
+function closeDetail(e){
+  if(!e || e.target===document.getElementById("overlay-detail"))
+    document.getElementById("overlay-detail").classList.remove("open");
+}
+
+// ── TABELLA CLIENTI ───────────────────────────────────────────────
+function renderTable(){
+  var keys = Object.keys(DB);
+  var q = (document.getElementById("s-cli").value||"").toLowerCase();
+  if(q) keys = keys.filter(function(k){return k.toLowerCase().includes(q);});
+  keys.sort(function(a,b){return isOn(DB[b].last_seen)-isOn(DB[a].last_seen)||a.localeCompare(b);});
+  var h = "";
+  keys.forEach(function(cid){
+    var c = DB[cid];
+    var on = isOn(c.last_seen);
+    var lc = licClass(c), lt = licText(c);
+    h += "<tr>";
+    h += "<td style='color:var(--gold);font-weight:700;'>"+cid+(c.client_name?"<br><span style='color:var(--text2);font-size:11px;font-weight:400;'>"+escHtml(c.client_name)+"</span>":"")+"</td>";
+    h += "<td><span class='status'><span class='dot "+(on?"on":"off")+"'></span>"+(on?"LIVE":"offline")+"</span></td>";
+    h += "<td><span class='badge "+lc+"'>"+lt+"</span></td>";
+    h += "<td>"+fmtExp(c.license_expiry)+"</td>";
+    h += "<td>"+fmtD(c.first_seen)+"</td>";
+    h += "<td>"+fmtD(c.last_seen)+"</td>";
+    h += "<td style='display:flex;gap:4px;'>";
+    h += "<button class='abtn agold' onclick='CUR=\""+cid+"\";openModal(\"modal-ren\")'>RINNOVA</button>";
+    if(c.blocked){
+      h += "<button class='abtn ag' onclick='CUR=\""+cid+"\";doBlock(false)'>SBLOCCA</button>";
+    } else {
+      h += "<button class='abtn ar' onclick='CUR=\""+cid+"\";doBlock(true)'>BLOCCA</button>";
+    }
+    h += "</td></tr>";
+  });
+  document.getElementById("cli-body").innerHTML = h || "<tr><td colspan='7' style='text-align:center;color:var(--text2);padding:30px;'>Nessun cliente</td></tr>";
+}
+
+// ── MESSAGGI ─────────────────────────────────────────────────────
+function _userIsTyping(){
+  // Controlla se l'utente sta scrivendo in un campo reply
+  var active = document.activeElement;
+  if(!active) return false;
+  if(active.classList.contains("reply-inp") && active.value.length > 0) return true;
+  if(active.id === "dist-msg-txt" && active.value.length > 0) return true;
+  if(active.id === "msg-txt" && active.value.length > 0) return true;
+  // NUOVO: campi billing distributore (fisso e per-lotto)
+  if(active.id && (active.id.startsWith("bfix-") || active.id.startsWith("brate-"))) return true;
+  return false;
+}
+
+var _chatCid = null;
+
+function renderMsg(){
+  if(_userIsTyping()) return;
+  var keys = Object.keys(DB).filter(function(k){return (DB[k].messages||[]).length>0;});
+  var countEl = document.getElementById("msg-count");
+  if(countEl) countEl.textContent = keys.length ? keys.length + " conversation" + (keys.length===1?"e":"i") : "";
+  if(!keys.length){
+    document.getElementById("msg-list").innerHTML="<div class='empty'>Nessun messaggio</div>";
+    return;
+  }
+  var h = "<div style='display:flex;flex-direction:column;gap:6px;'>";
+  keys.forEach(function(cid){
+    var c = DB[cid];
+    var msgs = c.messages||[];
+    var unr = c.unread_replies||0;
+    var last = msgs[msgs.length-1];
+    var lastTxt = last ? (last.text.length>60 ? last.text.substring(0,60)+"…" : last.text) : "";
+    var lastFrom = last && last.from==="client" ? "👤 " : "👤 Admin: ";
+    var isOnline = isOn(c.last_seen);
+    h += "<div onclick='openChat(\""+escHtml(cid)+"\")' style='background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:border-color .15s;' onmouseover='this.style.borderColor=\"var(--gold)\"' onmouseout='this.style.borderColor=\"var(--border)\"'>";
+    h += "<div style='display:flex;align-items:center;gap:10px;min-width:0;'>";
+    h += "<div style='width:8px;height:8px;border-radius:50%;background:"+(isOnline?"var(--green)":"var(--muted)")+";flex-shrink:0;'></div>";
+    h += "<div style='min-width:0;'>";
+    h += "<div style='font-weight:700;font-size:12px;color:var(--gold);margin-bottom:3px;'>"+escHtml(cid)+"</div>";
+    h += "<div style='font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;'>"+escHtml(lastTxt)+"</div>";
+    h += "</div></div>";
+    h += "<div style='display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;'>";
+    if(unr>0) h += "<span style='background:var(--red);color:#fff;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700;'>"+unr+"</span>";
+    h += "<span style='font-size:10px;color:var(--muted);'>"+(last?last.ts:"")+"</span>";
+    h += "<span style='font-size:10px;color:var(--text2);'>"+msgs.length+" msg</span>";
+    h += "</div></div>";
+  });
+  h += "</div>";
+  document.getElementById("msg-list").innerHTML = h;
+  // Aggiorna modal se aperto
+  if(_chatCid && DB[_chatCid]) _renderChatMessages(_chatCid);
+}
+
+function openChat(cid){
+  _chatCid = cid;
+  var c = DB[cid];
+  document.getElementById("chat-modal-title").textContent = cid;
+  document.getElementById("chat-modal-sub").textContent = (c.client_name||"") + (c.unread_replies>0?" · "+c.unread_replies+" non letti":"");
+  _renderChatMessages(cid);
+  openModal("modal-chat");
+  document.getElementById("chat-reply-inp").focus();
+  // Segna letti
+  if(c.unread_replies>0)
+    fetch("/api/mark_replies_read/"+cid,{method:"POST",headers:{"X-Admin-Password":APW}});
+}
+
+function _renderChatMessages(cid){
+  var msgs = (DB[cid]||{}).messages||[];
+  var el = document.getElementById("chat-messages");
+  if(!el) return;
+  var h = "";
+  msgs.forEach(function(m){
+    var isCli = m.from==="client";
+    var align = isCli ? "flex-start" : "flex-end";
+    var bg = isCli ? "var(--bg2)" : "var(--card2,#0d1f3c)";
+    var col = isCli ? "var(--text)" : "var(--gold)";
+    var label = isCli ? "👤 Cliente" : "🔑 Admin";
+    h += "<div style='display:flex;flex-direction:column;align-items:"+align+";gap:2px;'>";
+    h += "<div style='font-size:9px;color:var(--muted);'>"+label+" · "+escHtml(m.ts||"")+"</div>";
+    h += "<div style='background:"+bg+";color:"+col+";border-radius:10px;padding:8px 12px;max-width:85%;font-size:12px;line-height:1.5;position:relative;'>";
+    h += escHtml(m.text);
+    if(m.id) h += "<span onclick='deleteMsgConfirm(\""+escHtml(cid)+"\",\""+escHtml(m.id)+"\")' style='position:absolute;top:4px;right:6px;font-size:10px;color:var(--muted);cursor:pointer;opacity:0.5;' title='Elimina'>✕</span>";
+    h += "</div></div>";
+  });
+  el.innerHTML = h || "<div style='color:var(--muted);font-size:12px;text-align:center;margin-top:20px;'>Nessun messaggio</div>";
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendChatReply(){
+  if(!_chatCid) return;
+  var inp = document.getElementById("chat-reply-inp");
+  var txt = inp ? inp.value.trim() : "";
+  if(!txt) return;
+  fetch("/api/send_message/"+_chatCid,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({text:txt})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){ inp.value=""; load(); }
+  });
+}
+
+function deleteMsgConfirm(cid, msgId){
+  if(!confirm("Eliminare questo messaggio?")) return;
+  fetch("/api/delete_message/"+cid+"/"+msgId,{
+    method:"DELETE", headers:{"X-Admin-Password":APW}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok) load();
+  });
+}
+
+function deleteChatConfirm(){
+  if(!_chatCid) return;
+  if(!confirm("Cancellare tutta la chat con "+_chatCid+"? Azione irreversibile.")) return;
+  fetch("/api/delete_chat/"+_chatCid,{
+    method:"DELETE", headers:{"X-Admin-Password":APW}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){ closeMO(null,"modal-chat"); _chatCid=null; load(); }
+  });
+}
+
+function sendReply(btn){
+  var cid = btn.getAttribute("data-cid");
+  var inp = document.getElementById("ri-"+cid);
+  var txt = inp?inp.value.trim():"";
+  if(!txt) return;
+  fetch("/api/send_message/"+cid,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({text:txt})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){inp.value="";load();}
+  });
+}
+
+// ── SCADENZE ─────────────────────────────────────────────────────
+function renderScad(){
+  var keys = Object.keys(DB).sort(function(a,b){
+    var da=DB[a].license_days||0, db=DB[b].license_days||0;
+    if(da<=0&&db>0) return -1;
+    if(db<=0&&da>0) return 1;
+    return da-db;
+  });
+  var h = "";
+  keys.forEach(function(cid){
+    var c = DB[cid];
+    var on = isOn(c.last_seen);
+    var lc = licClass(c), lt = licText(c);
+    h += "<tr>";
+    h += "<td style='color:var(--gold);font-weight:700;'>"+cid+(c.client_name?"<br><span style='color:var(--text2);font-size:11px;font-weight:400;'>"+escHtml(c.client_name)+"</span>":"")+"</td>";
+    h += "<td><span class='status'><span class='dot "+(on?"on":"off")+"'></span>"+(on?"LIVE":"offline")+"</span></td>";
+    h += "<td><span class='badge "+lc+"'>"+lt+"</span></td>";
+    h += "<td>"+fmtExp(c.license_expiry)+"</td>";
+    h += "<td style='display:flex;gap:4px;'>";
+    h += "<button class='abtn agold' onclick='CUR=\""+cid+"\";openModal(\"modal-ren\")'>RINNOVA</button>";
+    if(c.blocked){
+      h += "<button class='abtn ag' onclick='CUR=\""+cid+"\";doBlock(false)'>SBLOCCA</button>";
+    } else {
+      h += "<button class='abtn ar' onclick='CUR=\""+cid+"\";doBlock(true)'>BLOCCA</button>";
+    }
+    h += "</td></tr>";
+  });
+  document.getElementById("scad-body").innerHTML = h;
+}
+
+// ── AZIONI ────────────────────────────────────────────────────────
+function doBlock(block){
+  if(!CUR) return;
+  var msg = block ? "Bloccare "+CUR+"?" : "Sbloccare "+CUR+"?";
+  if(!confirm(msg)) return;
+  var url = block ? "/api/block_client/"+CUR : "/api/unblock_client/"+CUR;
+  fetch(url,{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      document.getElementById("overlay-detail").classList.remove("open");
+      load();
+    }
+  });
+}
+
+function renderArchivio(){
+  if(!APW){ console.warn("APW vuota"); return; }
+  var q = (document.getElementById("s-arch")||{}).value||"";
+  q = q.toLowerCase();
+  var el = document.getElementById("arch-list");
+  if(!el) return;
+  if(!DB || !Object.keys(DB).length){
+    el.innerHTML="<div class='empty'>Caricamento dati...</div>";
+    return;
+  }
+  var allEntries = [];
+  Object.keys(DB).forEach(function(cid){
+    var c = DB[cid];
+    var archive = c.traders_archive||[];
+    archive.forEach(function(a, idx){
+      allEntries.push({cid:cid, client_name:c.client_name||"", a:a, idx:idx});
+    });
+  });
+  // Filtra per cliente
+  if(q) allEntries = allEntries.filter(function(e){
+    return e.cid.toLowerCase().includes(q)||(e.client_name||"").toLowerCase().includes(q);
+  });
+  // Ordina per data più recente
+  allEntries.sort(function(x,y){
+    return (y.a.archived_at||"").localeCompare(x.a.archived_at||"");
+  });
+  if(!allEntries.length){
+    el.innerHTML="<div class='empty'>Nessuna scheda archiviata</div>";
+    return;
+  }
+  var h = "";
+  allEntries.forEach(function(e){
+    var a = e.a;
+    var sc = a.esito==="PASSATA"?"var(--green)":"var(--red)";
+    var dt = a.archived_at ? new Date(a.archived_at).toLocaleDateString("it-IT") : "—";
+    var gh = parseFloat(a.guadagno_hedge)||0;
+    var hcum = parseFloat(a.hedge_cum)||0;
+    var costo = parseFloat(a.costo_prop)||0;
+    h += "<div style='background:var(--bg2);border:1px solid var(--border);border-left:4px solid "+sc+";border-radius:10px;padding:14px;margin-bottom:10px;'>";
+    // Header riga
+    h += "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;'>";
+    h += "<div style='display:flex;align-items:center;gap:10px;'>";
+    h += "<span style='color:"+sc+";font-weight:700;font-size:13px;'>"+a.esito+"</span>";
+    h += "<span style='color:var(--text2);font-size:10px;'>"+dt+"</span>";
+    h += "<span style='color:var(--gold);font-size:11px;font-weight:700;'>"+escHtml(e.cid)+"</span>";
+    if(e.client_name) h += "<span style='color:var(--text2);font-size:10px;'>"+escHtml(e.client_name)+"</span>";
+    h += "</div>";
+    h += "<button class='abtn ar' style='font-size:9px;padding:2px 8px;' onclick='delArchEntry(\""+e.cid+"\","+e.idx+")'>&#10005;</button>";
+    h += "</div>";
+    // Grid dati
+    h += "<div style='display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:11px;'>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>Prop Firm</div><div style='font-weight:600;'>"+escHtml(a.prop_firm||"—")+"</div></div>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>Size</div><div style='font-weight:600;'>$"+(parseFloat(a.size)||0).toLocaleString("it-IT")+"</div></div>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>Fase</div><div style='font-weight:600;'>"+(a.fase||"—")+"</div></div>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>Costo Prop</div><div style='font-weight:600;color:var(--red);'>-€"+costo.toFixed(2)+"</div></div>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>HEDGE Cumulativo</div><div style='font-weight:600;color:"+(hcum>=0?"var(--green)":"var(--red)")+"'>"+fmt(hcum)+"</div></div>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>PROP Bal Finale</div><div style='font-weight:600;'>$"+(parseFloat(a.prop_bal_final)||0).toLocaleString("it-IT",{minimumFractionDigits:2})+"</div></div>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>HEDGE Bal Finale</div><div style='font-weight:600;'>$"+(parseFloat(a.hedge_bal_final)||0).toLocaleString("it-IT",{minimumFractionDigits:2})+"</div></div>";
+    h += "<div><div style='color:var(--text2);font-size:9px;margin-bottom:2px;'>Guadagno Hedge</div><div style='font-weight:700;font-size:13px;color:"+(gh>=0?"var(--green)":"var(--red)")+"'>"+fmt(gh)+"</div></div>";
+    h += "</div></div>";
+  });
+  el.innerHTML = h;
+}
+
+function archiviaScheda(cid, idx, esito){
+  if(!confirm("Archiviare questa scheda come "+esito+"? Il cumulativo verrà azzerato.")) return;
+  fetch("/api/archive_manual/"+cid+"/"+idx,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({esito:esito})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      load();
+      document.getElementById("overlay-detail").classList.remove("open");
+    } else {
+      alert("Errore: "+(d.error||"sconosciuto"));
+    }
+  });
+}
+
+function delArchEntry(cid, idx){
+  if(!confirm("Eliminare questa scheda dall'archivio?")) return;
+  fetch("/api/archive_delete/"+cid+"/"+idx,{method:"DELETE",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){ load(); renderArchivio(); }
+  });
+}
+
+function loadArchive(cid){
+  // Carica storico cicli (cambio costo_prop) — visibile su admin
+  fetch("/api/broker_history/"+cid,{headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(!d.ok) return;
+    var box = document.getElementById("detail-box");
+    if(!box) return;
+    var hist = d.history||[];
+    if(!hist.length) return;
+    var totNetto = hist.reduce(function(s,x){return s+(parseFloat(x.profitto_netto)||0);},0);
+    var h = "<div style='margin-top:18px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);'>";
+    h += "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;'>";
+    h += "<div style='font-weight:700;color:var(--gold);'>&#128176; Storico Cicli ("+hist.length+")</div>";
+    h += "<div style='font-size:11px;color:var(--text2);'>Totale netto: <span style='color:"+(totNetto>=0?"var(--green)":"var(--red)")+";font-weight:700;'>"+(totNetto>=0?"+":"")+(totNetto.toLocaleString("it-IT",{style:"currency",currency:"USD",minimumFractionDigits:2}))+"</span></div></div>";
+    h += "<div style='font-size:10px;color:var(--text2);margin-bottom:8px;'>Snapshot salvato automaticamente al cambio del Costo Prop</div>";
+    hist.slice().reverse().forEach(function(x, ridx){
+      var realIdx = hist.length - 1 - ridx;
+      var pn = parseFloat(x.profitto_netto)||0;
+      var pnCol = pn>=0?"var(--green)":"var(--red)";
+      var dt = x.ts ? new Date(x.ts).toLocaleString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
+      h += "<div style='background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:6px;border-left:3px solid "+pnCol+";'>";
+      h += "<div style='display:flex;justify-content:space-between;margin-bottom:6px;'>";
+      h += "<span style='color:var(--gold);font-weight:700;font-size:12px;'>"+(x.prop_firm||"—")+"</span>";
+      h += "<span style='display:flex;gap:8px;align-items:center;'><span style='color:var(--text2);font-size:10px;'>"+dt+"</span>";
+      h += "<button onclick='delBrokerHistory(\""+cid+"\","+realIdx+")' style='background:none;border:1px solid var(--red);border-radius:4px;color:var(--red);font-size:9px;padding:2px 6px;cursor:pointer;'>&#10005;</button></span>";
+      h += "</div>";
+      h += "<div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;margin-bottom:6px;'>";
+      h += "<div><div style='color:var(--text2);font-size:9px;'>Costo Prop (vecchio)</div><div style='font-weight:600;color:var(--red);'>-$"+(parseFloat(x.costo_prop)||0).toFixed(2)+"</div></div>";
+      h += "<div><div style='color:var(--text2);font-size:9px;'>HEDGE Cumulativo</div><div style='font-weight:600;color:"+(parseFloat(x.hedge_pnl_cum)>=0?"var(--green)":"var(--red)")+";'>"+(parseFloat(x.hedge_pnl_cum)||0).toLocaleString("it-IT",{style:"currency",currency:"USD",minimumFractionDigits:2})+"</div></div>";
+      h += "</div>";
+      h += "<div style='border-top:1px solid var(--border);padding-top:6px;display:flex;justify-content:space-between;align-items:center;'>";
+      h += "<span style='font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;'>&#128176; Profitto Netto</span>";
+      h += "<span style='font-size:14px;font-weight:800;color:"+pnCol+";'>"+(pn>=0?"+":"")+pn.toLocaleString("it-IT",{style:"currency",currency:"USD",minimumFractionDigits:2})+"</span></div>";
+      if(x.new_costo_prop){
+        h += "<div style='font-size:9px;color:var(--text2);margin-top:4px;'>Sostituito con: $"+parseFloat(x.new_costo_prop).toFixed(2)+"</div>";
+      }
+      h += "</div>";
+    });
+    h += "</div>";
+    box.innerHTML += h;
+  }).catch(function(){});
+}
+
+function delBrokerHistory(cid, idx){
+  if(!confirm("Eliminare questa voce dello storico?")) return;
+  fetch("/api/broker_history_delete/"+cid+"/"+idx,{method:"DELETE",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok) loadArchive(cid);
+    else alert("Errore: "+(d.error||"sconosciuto"));
+  });
+}
+
+// ── DOWNLOAD EXE ──────────────────────────────────────────────────
+function loadExeStatus(){
+  if(!APW){ setTimeout(loadExeStatus, 500); return; }
+  fetch("/api/exe_status",{headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    var badge  = document.getElementById("exe-status-badge");
+    var btn    = document.getElementById("btn-toggle-exe");
+    var cnt    = document.getElementById("exe-download-count");
+    if(!badge||!btn) return;
+    if(!d.ok || !d.exists){
+      badge.style.background="#1A1A2E"; badge.style.color="#4A6080";
+      badge.textContent="⚠ File non trovato in /downloads/";
+      btn.style.background="#1A1A2E"; btn.style.color="#fff";
+      btn.textContent="Carica ARBEXA.zip nella cartella /downloads/";
+      btn.disabled=true;
+      if(cnt) cnt.textContent="Download totali: 0";
+      return;
+    }
+    btn.disabled=false;
+    if(d.visible){
+      badge.style.background="#0D3B2A"; badge.style.color="#00FF88";
+      badge.textContent="✅ DOWNLOAD ATTIVO";
+      btn.style.background="#3B0D0D"; btn.style.color="#FF3355";
+      btn.textContent="🔒 BLOCCA DOWNLOAD";
+    } else {
+      badge.style.background="#2B0D0D"; badge.style.color="#FF3355";
+      badge.textContent="🔒 DOWNLOAD BLOCCATO";
+      btn.style.background="#0D3B2A"; btn.style.color="#00FF88";
+      btn.textContent="✅ ATTIVA DOWNLOAD";
+    }
+    if(cnt) cnt.textContent="Download totali: "+(d.download_count||0);
+  }).catch(function(){
+    var badge=document.getElementById("exe-status-badge");
+    if(badge){badge.style.color="#FF3355";badge.textContent="Errore connessione";}
+  });
+}
+
+var _exeInterval = null;
+function startExeRefresh(){ 
+  loadExeStatus(); 
+  if(_exeInterval) clearInterval(_exeInterval);
+  _exeInterval = setInterval(loadExeStatus, 2000);
+}
+function stopExeRefresh(){ 
+  if(_exeInterval){ clearInterval(_exeInterval); _exeInterval=null; }
+}
+
+function toggleExe(){
+  if(!APW) return;
+  var btn = document.getElementById("btn-toggle-exe");
+  if(btn) btn.disabled=true;
+  fetch("/api/toggle_exe",{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok) loadExeStatus();
+    if(btn) btn.disabled=false;
+  }).catch(function(){ if(btn) btn.disabled=false; });
+}
+
+function doResetDownloadCount(){
+  if(!confirm("Azzerare il contatore download?")) return;
+  fetch("/api/reset_download_count",{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok) loadExeStatus();
+  });
+}
+
+// ── COMANDI CON SELEZIONE SCHEDE ──────────────────────────────────
+var _selectedTraders = {};  // {cid: [idx, ...]}
+
+function openCmdModal(cmd){
+  if(!CUR){ alert("Seleziona prima un cliente"); return; }
+  var c = DB[CUR];
+  var traders = c.traders||[];
+  var labels = {buy:"BUY ▲",sell:"SELL ▼",panic:"⚠ PANIC"};
+  var colors  = {buy:"var(--green)",sell:"var(--red)",panic:"var(--red)"};
+  var h = "<div style='margin-bottom:12px;color:var(--text2);font-size:12px;'>Seleziona le schede su cui eseguire il comando:</div>";
+  traders.forEach(function(t, i){
+    var firm = t.prop_firm||("Scheda #"+(i+1));
+    h += "<label style='display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;'>";
+    h += "<input type='checkbox' id='cmd-trader-"+i+"' checked style='width:16px;height:16px;'>";
+    h += "<span style='color:var(--text);'>#"+(i+1)+" — "+firm+"</span></label>";
+  });
+  if(!traders.length){
+    h += "<div style='color:var(--muted);font-size:12px;'>Nessuna scheda trovata — il comando verrà inviato a tutte</div>";
+  }
+  document.getElementById("cmd-modal-title").textContent = labels[cmd]||cmd.toUpperCase();
+  document.getElementById("cmd-modal-title").style.color = colors[cmd]||"var(--gold)";
+  document.getElementById("cmd-modal-body").innerHTML = h;
+  document.getElementById("cmd-modal-confirm").onclick = function(){ doSendCmd(cmd, traders.length); };
+  document.getElementById("modal-cmd").classList.add("open");
+}
+
+function doSendCmd(cmd, total){
+  var idxs = [];
+  for(var i=0; i<total; i++){
+    var cb = document.getElementById("cmd-trader-"+i);
+    if(cb && cb.checked) idxs.push(i);
+  }
+  if(!idxs.length && total > 0){ alert("Seleziona almeno una scheda"); return; }
+  document.getElementById("modal-cmd").classList.remove("open");
+  var toSend = idxs.length ? idxs : [0];
+  // PANIC va diretto, niente preview
+  if(cmd === "panic"){
+    return _doSendCmdRaw(cmd, toSend);
+  }
+  // BUY/SELL → mostra preview (per ogni trader)
+  showAdminOrderPreview(cmd, toSend);
+}
+
+function _doSendCmdRaw(cmd, idxs){
+  // idxs = [0,1,2] oppure [null] per "tutte"
+  var toSend = idxs.length ? idxs : [null];
+  toSend.forEach(function(idx){
+    fetch("/api/command/"+CUR,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+      body:JSON.stringify({command:cmd, trader_index:idx})
+    });
+  });
+}
+
+function showAdminOrderPreview(cmd, idxs){
+  // Carica preview per il primo trader (e li applica a tutti se più)
+  var firstIdx = idxs[0];
+  fetch("/api/order_preview/"+CUR+"/"+firstIdx+"/"+cmd, {
+    headers: {"X-Admin-Password": APW}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(!d.ok){ alert("Errore preview: "+(d.error||"")); return; }
+    var sideColor = cmd==="buy" ? "var(--green)" : "var(--red)";
+    var sideIcon  = cmd==="buy" ? "▲" : "▼";
+    var multiNote = idxs.length > 1 ? "<div style='color:var(--gold);font-size:11px;margin-top:6px;'>Verrà inviato a "+idxs.length+" schede</div>" : "";
+    var ov = document.createElement("div");
+    ov.id = "admin-prev-overlay";
+    ov.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;";
+    ov.innerHTML =
+      "<div style='background:#0d1424;border:1px solid #1f2a44;border-radius:14px;max-width:380px;width:100%;padding:24px;'>"+
+      "<div style='text-align:center;margin-bottom:16px;'>"+
+        "<div style='color:"+sideColor+";font-size:18px;font-weight:bold;'>"+sideIcon+" CONFERMA "+cmd.toUpperCase()+"</div>"+
+        "<div style='color:var(--text2);font-size:13px;margin-top:4px;'>"+d.prop_firm+" — $"+(d.size||0).toLocaleString()+"</div>"+
+        "<div style='color:var(--gold);font-size:12px;margin-top:6px;font-weight:bold;'>Ratio: "+d.ratio+(d.auto_ratio?" (auto)":"")+"</div>"+
+        multiNote+
+      "</div>"+
+      "<div style='background:#0a1428;border-radius:10px;padding:14px;'>"+
+        _admPrevRow("PROP — Lotti",  d.lotto_prop.toFixed(2),       "var(--green)")+
+        _admPrevRow("PROP — SL",     "$"+d.sl_prop_usd.toFixed(0),  "#FF6B6B")+
+        _admPrevRow("PROP — TP",     "$"+d.tp_prop_usd.toFixed(0),  "var(--green)")+
+        _admPrevRow("HEDGE — Lotti", d.lotto_hedge.toFixed(2),      "#4fc3f7")+
+        _admPrevRow("HEDGE — TP",    "$"+d.tp_hedge_usd.toFixed(0), "var(--green)")+
+        _admPrevRow("HEDGE — SL",    "$"+d.sl_hedge_usd.toFixed(0), "#FF6B6B")+
+      "</div>"+
+      "<div style='display:flex;gap:10px;margin-top:16px;'>"+
+        "<button id='adm-prev-cancel' style='flex:1;background:#3D0A0A;color:var(--red);border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;'>✕ ANNULLA</button>"+
+        "<button id='adm-prev-confirm' style='flex:1;background:#0A3D1F;color:var(--green);border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;'>✅ CONFERMA</button>"+
+      "</div>"+
+      "</div>";
+    document.body.appendChild(ov);
+    document.getElementById("adm-prev-cancel").onclick = function(){ document.body.removeChild(ov); };
+    document.getElementById("adm-prev-confirm").onclick = function(){
+      document.body.removeChild(ov);
+      _doSendCmdRaw(cmd, idxs);
+    };
+  }).catch(function(){ alert("Errore di connessione al server"); });
+}
+
+function _admPrevRow(label, value, color){
+  return "<div style='display:flex;justify-content:space-between;padding:5px 0;'>"+
+         "<span style='color:var(--text2);font-size:12px;'>"+label+"</span>"+
+         "<span style='color:"+color+";font-weight:bold;font-size:12px;'>"+value+"</span></div>";
+}
+
+function closeCmdModal(e){
+  if(!e || e.target===document.getElementById("modal-cmd"))
+    document.getElementById("modal-cmd").classList.remove("open");
+}
+
+function toggleExe(){
+  if(!APW) return;
+  var btn = document.getElementById("btn-toggle-exe");
+  if(btn) btn.disabled=true;
+  fetch("/api/toggle_exe",{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok) loadExeStatus();
+    if(btn) btn.disabled=false;
+  }).catch(function(){ if(btn) btn.disabled=false; });
+}
+function deleteArchiveEntry(cid, idx){}
+function deleteArchiveAll(cid){}
+
+function doResetTotals(){
+  if(!CUR) return;
+  if(!confirm("Azzerare i totali cumulativi di "+CUR+"? Azione irreversibile.")) return;
+  fetch("/api/reset_totals/"+CUR,{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){ alert("Totali azzerati"); load(); }
+    else alert("Errore: "+(d.error||""));
+  });
+}
+
+function doResetHedgeLots(){
+  if(!CUR) return;
+  if(!confirm("Azzerare il cumulativo LOTTI HEDGE di "+CUR+"?\nAzione irreversibile. Il cliente vedrà un messaggio di conferma sulla dashboard.")) return;
+  fetch("/api/reset_hedge_lots/"+CUR,{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){ alert("Lotti HEDGE azzerati"); load(); }
+    else alert("Errore: "+(d.error||""));
+  });
+}
+
+function doSetName(){
+  var name = document.getElementById("name-val").value.trim();
+  var res  = document.getElementById("name-res");
+  fetch("/api/set_client_name/"+CUR,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({name:name})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){res.style.color="var(--green)";res.textContent="Salvato!";load();setTimeout(function(){closeMO(null,"modal-name");},800);}
+    else{res.style.color="var(--red)";res.textContent="Errore";}
+  });
+}
+
+// ── DISTRIBUTORI ─────────────────────────────────────────────────
+var DIST_DB = {};
+
+function copyDistLink(url, btn){
+  navigator.clipboard.writeText(url).then(function(){
+    btn.textContent="&#10003; Copiato!";
+    btn.style.color="var(--green)";
+    btn.style.borderColor="var(--green)";
+    setTimeout(function(){btn.innerHTML="&#128203; Copia";btn.style.color="";btn.style.borderColor="";},2000);
+  });
+}
+
+function loadDist(){
+  fetch("/api/distributors",{headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    DIST_DB = d;
+    if(document.getElementById("pg-dist").classList.contains("active") && !_userIsTyping()) renderDist();
+  }).catch(function(){});
+}
+
+function renderDist(){
+  var keys = Object.keys(DIST_DB);
+  var el = document.getElementById("dist-list");
+  if(!keys.length){ el.innerHTML="<div class='empty'>Nessun distributore creato</div>"; return; }
+  var h = "<div class='grid'>";
+  keys.forEach(function(did){
+    var d = DIST_DB[did];
+    var nCli = (d.clients||[]).length;
+    // Calcolo aggregato lotti hedge di tutti i clienti del distributore
+    var totLots = 0;
+    (d.clients||[]).forEach(function(cid){
+      var cliObj = DB[cid] || {};
+      (cliObj.traders||[]).forEach(function(t){
+        totLots += parseFloat(t.hedge_lots_cum)||0;
+      });
+    });
+    h += "<div class='dist-card' id='distcard-"+did+"'>";
+    h += "<div class='card-head'><span class='cid'>&#128101; "+did+"</span>";
+    h += "<span style='font-size:11px;color:var(--text2);'>"+nCli+" client"+(nCli===1?"e":"i")+"</span></div>";
+    if(d.name) h += "<div style='font-size:12px;color:var(--text);margin-bottom:6px;'>"+d.name+"</div>";
+    // Riquadro Lotti HEDGE totali con bottone reset
+    h += "<div style='background:var(--bg3);border:1px solid var(--gold);border-radius:8px;padding:8px 10px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;'>";
+    h += "<div><div style='font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;'>Lotti HEDGE Totali</div>";
+    h += "<div style='font-size:18px;font-weight:700;color:var(--gold);'>"+totLots.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2})+"</div></div>";
+    h += "<button class='abtn agold' style='padding:6px 10px;font-size:10px;white-space:nowrap;' onclick='distResetHedgeLots(\""+did+"\","+nCli+")'>&#8635; RESET LOTTI</button>";
+    h += "</div>";
+    // ═══ NUOVO: Sezione Pagamenti/Commissioni ═══
+    var bMode  = d.billing_mode || "fixed";
+    var bFixed = parseFloat(d.fixed_amount)||0;
+    var bRate  = parseFloat(d.per_lot_rate)||0;
+    var bCur   = d.currency || "USD";
+    // Calcolo importo lato client (replica della logica server per preview)
+    var perLotAmt = +(bRate * totLots).toFixed(2);
+    var amount = 0;
+    if      (bMode === "fixed")        amount = bFixed;
+    else if (bMode === "per_lot")      amount = perLotAmt;
+    else if (bMode === "hybrid_sum")   amount = +(bFixed + perLotAmt).toFixed(2);
+    else if (bMode === "hybrid_max")   amount = Math.max(bFixed, perLotAmt);
+    var curMonth = (new Date()).toISOString().slice(0,7);
+    var isPaid   = (d.last_paid_month === curMonth);
+    // Calcolo mesi saltati lato client (replica logica server)
+    var missedMonths = 0;
+    if(d.last_paid_month){
+      try{
+        var lp = d.last_paid_month.split("-").map(Number);
+        var cp = curMonth.split("-").map(Number);
+        var diff = (cp[0]-lp[0])*12 + (cp[1]-lp[1]);
+        missedMonths = Math.max(0, diff - 1);
+      }catch(e){}
+    }
+    h += "<div style='background:var(--bg3);border:1px solid var(--blue);border-radius:8px;padding:10px;margin-bottom:10px;'>";
+    h += "<div style='font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;'>";
+    h += "<span>&#128176; Pagamenti / Commissioni</span>";
+    h += "<span style='font-size:9px;color:var(--text2);'>Mese: "+curMonth+"</span></div>";
+    // BADGE MESI SALTATI (rosso)
+    if(missedMonths > 0){
+      h += "<div style='background:#3a0a0a;border:1px solid var(--red);border-radius:6px;padding:6px 10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;'>";
+      h += "<span style='font-size:14px;'>&#9888;</span>";
+      h += "<div style='flex:1;'><div style='color:var(--red);font-weight:700;font-size:11px;'>HAI SALTATO "+missedMonths+" MESE"+(missedMonths>1?"I":"")+"</div>";
+      h += "<div style='font-size:9px;color:var(--text2);'>Ultimo pagamento: "+d.last_paid_month+"</div></div></div>";
+    }
+    // Modalità di calcolo
+    h += "<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;font-size:10px;'>";
+    var modes = [["fixed","Fisso"],["per_lot","Per lotto"],["hybrid_sum","Fisso + Lotti"],["hybrid_max","Max(Fisso,Lotti)"]];
+    modes.forEach(function(m){
+      var sel = (bMode === m[0]);
+      h += "<label style='display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 7px;border-radius:5px;border:1px solid "+(sel?"var(--blue)":"var(--border)")+";background:"+(sel?"#0d1f3c":"transparent")+";color:"+(sel?"var(--blue)":"var(--text2)")+";'>";
+      h += "<input type='radio' name='bmode-"+did+"' value='"+m[0]+"' "+(sel?"checked":"")+" onchange='distSetBilling(\""+did+"\")' style='accent-color:var(--blue);'>";
+      h += m[1]+"</label>";
+    });
+    h += "</div>";
+    // Input fisso e per_lot
+    h += "<div style='display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;'>";
+    h += "<div style='flex:1;min-width:120px;'><div style='font-size:9px;color:var(--text2);margin-bottom:3px;'>FISSO ($/mese)</div>";
+    h += "<input type='number' step='0.01' id='bfix-"+did+"' value='"+bFixed+"' onblur='distSetBilling(\""+did+"\")' style='width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:5px 7px;font-size:11px;'></div>";
+    h += "<div style='flex:1;min-width:120px;'><div style='font-size:9px;color:var(--text2);margin-bottom:3px;'>PER LOTTO ($)</div>";
+    h += "<input type='number' step='0.01' id='brate-"+did+"' value='"+bRate+"' onblur='distSetBilling(\""+did+"\")' style='width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:5px 7px;font-size:11px;'></div>";
+    h += "</div>";
+    // Importo da pagare con stato
+    h += "<div style='background:#0d1f3c;border:1px solid "+(isPaid?"var(--green)":"var(--gold)")+";border-radius:6px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;'>";
+    h += "<div><div style='font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;'>Importo da pagare</div>";
+    h += "<div id='bamt-"+did+"' style='font-size:20px;font-weight:800;color:"+(isPaid?"var(--green)":"var(--gold)")+";'>"+amount.toLocaleString("it-IT",{style:"currency",currency:bCur,minimumFractionDigits:2})+"</div>";
+    h += "<div style='font-size:9px;color:var(--text2);'>"+totLots.toFixed(2)+" lotti × $"+bRate+" = $"+perLotAmt+"</div></div>";
+    h += "<button class='abtn "+(isPaid?"ag":"agold")+"' style='font-size:10px;padding:7px 11px;' onclick='distMarkPaid(\""+did+"\","+(!isPaid)+")'>"+(isPaid?"&#10003; PAGATO":"&#9888; DA PAGARE")+"</button>";
+    h += "</div>";
+    h += "</div>";
+    h += "<div style='font-size:11px;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;'>Link: <span style='color:var(--blue);font-family:monospace;'>https://sniperpro.online/distributor/"+did+"</span><button onclick='copyDistLink(\"https://sniperpro.online/distributor/"+did+"\",this)' style='background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text2);font-size:10px;padding:2px 8px;cursor:pointer;'>&#128203; Copia</button></div>";
+    h += "<div style='font-size:11px;color:var(--text2);margin-bottom:10px;'>Password: <span style='color:var(--gold);font-family:monospace;'>"+d.password+"</span></div>";
+    // Clienti assegnati con checkbox
+    if((d.clients||[]).length){
+      h += "<div style='font-size:10px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;'>Clienti assegnati</div>";
+      d.clients.forEach(function(cid){
+        var cn = (DB[cid]||{}).client_name||"";
+        var on = isOn((DB[cid]||{}).last_seen);
+        h += "<div style='display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;'>";
+        h += "<label style='display:flex;align-items:center;gap:6px;cursor:pointer;'>";
+        h += "<input type='checkbox' id='dchk-"+did+"-"+cid+"' onchange='updateDistBar(\""+did+"\")' style='width:14px;height:14px;accent-color:var(--gold);'>";
+        h += "<span class='dot "+(on?"on":"off")+"' style='width:7px;height:7px;'></span>";
+        h += "<span style='color:var(--gold);'>"+cid+(cn?" — "+cn:"")+"</span>";
+        h += "</label>";
+        h += "<button class='abtn ar' style='padding:2px 7px;font-size:9px;' onclick='distUnassign(\""+did+"\",\""+cid+"\")'>&#10005;</button>";
+        h += "</div>";
+      });
+      // Barra comandi distributore
+      h += "<div id='distbar-"+did+"' style='display:none;margin-top:10px;background:#0d1f3c;border:1px solid var(--gold);border-radius:8px;padding:8px 10px;display:none;align-items:center;gap:8px;flex-wrap:wrap;'>";
+      h += "<span id='distbar-cnt-"+did+"' style='color:var(--gold);font-size:11px;font-weight:700;'></span>";
+      h += "<button onclick='distMultiCmd(\""+did+"\",\"buy\")' style='background:#0d2b1f;border:1px solid var(--green);border-radius:6px;color:var(--green);font-weight:700;padding:5px 12px;cursor:pointer;font-size:11px;'>▲ BUY</button>";
+      h += "<button onclick='distMultiCmd(\""+did+"\",\"sell\")' style='background:#2b0d0d;border:1px solid var(--red);border-radius:6px;color:var(--red);font-weight:700;padding:5px 12px;cursor:pointer;font-size:11px;'>▼ SELL</button>";
+      h += "<button onclick='distMultiCmd(\""+did+"\",\"panic\")' style='background:#1a0000;border:1px solid #ff4444;border-radius:6px;color:#ff4444;font-weight:700;padding:5px 12px;cursor:pointer;font-size:11px;'>⚠ PANIC</button>";
+      h += "<button onclick='distDeselectAll(\""+did+"\")' style='background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);padding:5px 8px;cursor:pointer;font-size:11px;margin-left:auto;'>✕</button>";
+      h += "</div>";
+    }
+    h += "<div style='margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;'>";
+    h += "<button class='abtn ag' onclick='openDistAssign(\""+did+"\")'>&#43; Assegna cliente</button>";
+    h += "<button class='abtn ap' onclick='openDistMsg(\""+did+"\")' title='Messaggio'>&#9993;</button>";
+    h += "<button class='abtn ar' onclick='distDelete(\""+did+"\")'>&#128465; Elimina</button>";
+    h += "</div></div>";
+  });
+  h += "</div>";
+  el.innerHTML = h;
+}
+
+var _lastDistCmdGroup = {};
+
+function updateDistBar(did){
+  var d = DIST_DB[did]||{};
+  var cids = (d.clients||[]).filter(function(cid){
+    var chk = document.getElementById("dchk-"+did+"-"+cid);
+    return chk && chk.checked;
+  });
+  var bar = document.getElementById("distbar-"+did);
+  var cnt = document.getElementById("distbar-cnt-"+did);
+  if(!bar) return;
+  if(cids.length > 0){
+    bar.style.display = "flex";
+    cnt.textContent = cids.length+" selezionat"+(cids.length===1?"o":"i");
+  } else {
+    bar.style.display = "none";
+  }
+}
+
+function distDeselectAll(did){
+  var d = DIST_DB[did]||{};
+  (d.clients||[]).forEach(function(cid){
+    var chk = document.getElementById("dchk-"+did+"-"+cid);
+    if(chk) chk.checked = false;
+  });
+  var bar = document.getElementById("distbar-"+did);
+  if(bar) bar.style.display = "none";
+}
+
+function distMultiCmd(did, cmd){
+  var d = DIST_DB[did]||{};
+  var cids = (d.clients||[]).filter(function(cid){
+    var chk = document.getElementById("dchk-"+did+"-"+cid);
+    return chk && chk.checked;
+  });
+  if(!cids.length) return;
+  var labels = {buy:"BUY ▲",sell:"SELL ▼",panic:"⚠ PANIC"};
+  var colors  = {buy:"#26a69a",sell:"#ef5350",panic:"#ff4444"};
+  var n = cids.length;
+  if(!confirm("Inviare "+labels[cmd]+" a "+n+" client"+(n===1?"e":"i")+" con 32s di intervallo?")) return;
+  _lastDistCmdGroup[did] = cids.slice();
+  distDeselectAll(did);
+  cids.forEach(function(cid, i){
+    var delay = i * 32000;
+    _setCmdBadge(cid, i===0?"🔄 Invio...":"⏳ "+(i*32)+"s", i===0?colors[cmd]:"#b8941f");
+    if(i > 0) setTimeout(function(){ _setCmdBadge(cid,"🔄 Invio...",colors[cmd]); }, delay-2000);
+    setTimeout(function(){
+      fetch("/api/command/"+cid,{
+        method:"POST",
+        headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+        body:JSON.stringify({command:cmd, trader_index:null})
+      }).then(function(){
+        _setCmdBadge(cid,"✅ "+labels[cmd],colors[cmd]);
+        setTimeout(function(){ _removeCmdBadge(cid); }, 8000);
+      });
+    }, delay);
+  });
+}
+
+function openDistAssign(did){
+  window._assignDist = did;
+  var sel = document.getElementById("assign-cid");
+  sel.innerHTML = "";
+  Object.keys(DB).forEach(function(cid){
+    var already = (DIST_DB[did]||{clients:[]}).clients.indexOf(cid) >= 0;
+    if(!already){
+      var opt = document.createElement("option");
+      opt.value = cid;
+      opt.textContent = cid+((DB[cid].client_name)?" — "+DB[cid].client_name:"");
+      sel.appendChild(opt);
+    }
+  });
+  openModal("modal-assign");
+}
+
+function doDistAssign(){
+  var did = window._assignDist;
+  var cid = document.getElementById("assign-cid").value;
+  var res = document.getElementById("assign-res");
+  if(!cid){res.textContent="Seleziona un cliente";return;}
+  fetch("/api/distributor_assign/"+did,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({client_id:cid})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){res.style.color="var(--green)";res.textContent="Assegnato!";loadDist();setTimeout(function(){closeMO(null,"modal-assign");},800);}
+    else{res.style.color="var(--red)";res.textContent="Errore";}
+  });
+}
+
+function distUnassign(did, cid){
+  if(!confirm("Rimuovere "+cid+" da "+did+"?")) return;
+  fetch("/api/distributor_unassign/"+did,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({client_id:cid})
+  }).then(function(r){return r.json();}).then(function(){loadDist();});
+}
+
+function distDelete(did){
+  if(!confirm("Eliminare il distributore "+did+"?")) return;
+  fetch("/api/delete_distributor/"+did,{method:"DELETE",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(){loadDist();});
+}
+
+function distResetHedgeLots(did, nCli){
+  if(nCli === 0){
+    alert("Nessun cliente assegnato a questo distributore.");
+    return;
+  }
+  if(!confirm("Azzerare il cumulativo LOTTI HEDGE di TUTTI i "+nCli+" client"+(nCli===1?"e":"i")+" del distributore "+did+"?\n\nQuesta operazione è IRREVERSIBILE.")) return;
+  fetch("/api/dist_reset_hedge_lots/"+did,{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      alert("Lotti HEDGE azzerati per "+d.clients_reset+" client"+(d.clients_reset===1?"e":"i"));
+      loadDist();
+      load();
+    } else {
+      alert("Errore: "+(d.error||"sconosciuto"));
+    }
+  });
+}
+
+// ═══ BILLING / COMMISSIONI distributore ═══
+function distSetBilling(did){
+  // Legge la modalità selezionata e i valori, invia al server
+  var modeRadios = document.getElementsByName("bmode-"+did);
+  var mode = "fixed";
+  for(var i=0;i<modeRadios.length;i++){ if(modeRadios[i].checked){ mode = modeRadios[i].value; break; } }
+  var fixed = parseFloat(document.getElementById("bfix-"+did).value)||0;
+  var rate  = parseFloat(document.getElementById("brate-"+did).value)||0;
+  fetch("/api/distributor_billing_settings/"+did,{
+    method:"POST",
+    headers:{"X-Admin-Password":APW,"Content-Type":"application/json"},
+    body: JSON.stringify({billing_mode:mode, fixed_amount:fixed, per_lot_rate:rate})
+  })
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      // Aggiorna i campi locali in DIST_DB così il prossimo render è coerente
+      if(DIST_DB[did]){
+        DIST_DB[did].billing_mode  = mode;
+        DIST_DB[did].fixed_amount  = fixed;
+        DIST_DB[did].per_lot_rate  = rate;
+      }
+      // Aggiorna l'importo a video senza ricaricare tutta la lista
+      var el = document.getElementById("bamt-"+did);
+      if(el){
+        var amt = parseFloat(d.amount)||0;
+        el.textContent = amt.toLocaleString("it-IT",{style:"currency",currency:d.currency||"USD",minimumFractionDigits:2});
+      }
+    } else {
+      alert("Errore: "+(d.error||"impossibile aggiornare"));
+    }
+  })
+  .catch(function(e){ alert("Errore di rete"); });
+}
+
+function distMarkPaid(did, paid){
+  var d   = DIST_DB[did]||{};
+  var nCli = (d.clients||[]).length;
+  var msg;
+  if(paid){
+    msg = "Confermi di aver PAGATO la commissione di questo mese al distributore "+did+"?\n\n";
+    msg += "ATTENZIONE: questa azione AZZERA automaticamente il cumulativo lotti hedge ";
+    msg += "di tutti i "+nCli+" client"+(nCli===1?"e":"i")+" del distributore (chiusura ciclo di fatturazione).";
+  } else {
+    msg = "Annullare lo stato 'pagato' del distributore "+did+"?\n\n";
+    msg += "(I lotti gia' azzerati NON verranno ripristinati)";
+  }
+  if(!confirm(msg)) return;
+  fetch("/api/distributor_mark_paid/"+did,{
+    method:"POST",
+    headers:{"X-Admin-Password":APW,"Content-Type":"application/json"},
+    body: JSON.stringify({paid:paid})
+  })
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      loadDist();  // ricarica per mostrare nuovo stato + colore + lotti azzerati
+      load();      // ricarica anche client per aggiornare hedge_lots_cum
+    } else {
+      alert("Errore: "+(d.error||"sconosciuto"));
+    }
+  });
+}
+
+function doNewDist(){
+  var did  = document.getElementById("nd-id").value.trim().toLowerCase().replace(/\s+/g,"_");
+  var name = document.getElementById("nd-name").value.trim();
+  var pw   = document.getElementById("nd-pw").value.trim();
+  var res  = document.getElementById("nd-res");
+  if(!did||!pw){res.style.color="var(--red)";res.textContent="ID e password obbligatori";return;}
+  fetch("/api/create_distributor",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({id:did,name:name,password:pw})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){res.style.color="var(--green)";res.textContent="Creato!";loadDist();setTimeout(function(){closeMO(null,"modal-new-dist");},800);}
+    else{res.style.color="var(--red)";res.textContent="Errore: "+(d.error||"");}
+  });
+}
+
+function doResetFp(){
+  if(!CUR) return;
+  fetch("/api/reset_fingerprint/"+CUR,{method:"POST",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok) alert("Reset PC eseguito");
+  });
+}
+
+function doDel(){
+  if(!CUR) return;
+  if(!confirm("Eliminare "+CUR+" definitivamente? Azione irreversibile.")) return;
+  fetch("/api/delete_client/"+CUR,{method:"DELETE",headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      document.getElementById("overlay-detail").classList.remove("open");
+      load();
+    } else {
+      alert("Errore eliminazione: "+(d.error||"sconosciuto"));
+    }
+  });
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openModal(id){
+  document.getElementById(id).classList.add("open");
+  // Reset result
+  var res = id.replace("modal-","")+ "-res";
+  var el = document.getElementById(res);
+  if(el) el.textContent = "";
+}
+function closeMO(e,id){
+  if(!e || e.target===document.getElementById(id))
+    document.getElementById(id).classList.remove("open");
+}
+
+function openParamsModal(){
+  var c = DB[CUR];
+  if(!c) return;
+  var t = (c.traders||[])[0]||{};
+  document.getElementById("prm-sl").value    = t.stop_prop||"";
+  document.getElementById("prm-tp").value    = t.target_hedge||"";
+  document.getElementById("prm-dist").value  = t.distanza||"";
+  document.getElementById("prm-ratio").value = t.ratio_prop||"1:3";
+  document.getElementById("prm-auto").value  = (t.auto_ratio===false) ? "0" : "1";
+  document.getElementById("prm-res").textContent = "";
+  openModal("modal-params");
+}
+
+function doSetParams(){
+  var res = document.getElementById("prm-res");
+  res.textContent="..."; res.style.color="var(--gold)";
+  var rp = document.getElementById("prm-ratio").value;
+  var rparts = rp.split(":");
+  var rh = rparts[1]+":"+rparts[0];
+  var params = {
+    stop_prop:    parseFloat(document.getElementById("prm-sl").value)||1000,
+    target_hedge: parseFloat(document.getElementById("prm-tp").value)||200,
+    distanza:     parseInt(document.getElementById("prm-dist").value)||1000,
+    ratio_prop:   rp,
+    ratio_hedge:  rh,
+    auto_ratio:   document.getElementById("prm-auto").value === "1",
+    trader_index: parseInt(document.getElementById("prm-idx").value)||0,
+  };
+  fetch("/api/set_params/"+CUR,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify(params)
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      res.style.color="var(--green)";
+      res.textContent="✅ Parametri inviati";
+      setTimeout(function(){closeMO(null,"modal-params");},1500);
+    } else {
+      res.style.color="var(--red)";
+      res.textContent="❌ "+(d.error||"Errore");
+    }
+  }).catch(function(e){
+    res.style.color="var(--red)";
+    res.textContent="Errore: "+String(e);
+  });
+}
+
+function doRen(){
+  var pw   = document.getElementById("ren-pw").value.trim();
+  var days = parseInt(document.getElementById("ren-days").value)||30;
+  var res  = document.getElementById("ren-res");
+  if(!CUR){res.style.color="var(--red)";res.textContent="Seleziona prima un cliente";return;}
+  if(!pw){res.style.color="var(--red)";res.textContent="Inserisci la password licenze";return;}
+  res.textContent="..."; res.style.color="var(--gold)";
+  fetch("/api/renew_license/"+CUR,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW,"X-License-Password":pw},
+    body:JSON.stringify({days:days})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok){
+      res.style.color="var(--green)";
+      res.textContent="✅ Rinnovata fino al "+d.expiry+" ("+days+"gg)";
+      setTimeout(function(){ load(); }, 2000);
+    } else {
+      res.style.color="var(--red)";
+      res.textContent="❌ "+(d.error||"Errore");
+    }
+  })
+  .catch(function(e){
+    res.style.color="var(--red)";
+    res.textContent="Errore: "+String(e);
+  });
+}
+
+function doMsg(){
+  var txt = document.getElementById("msg-txt").value.trim();
+  var res = document.getElementById("msg-res");
+  if(!txt){res.style.color="var(--red)";res.textContent="Testo vuoto";return;}
+  fetch("/api/send_message/"+CUR,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({text:txt})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){res.style.color="var(--green)";res.textContent="Inviato!";setTimeout(function(){closeMO(null,"modal-msg");},1000);load();}
+    else{res.style.color="var(--red)";res.textContent="Errore";}
+  });
+}
+
+function doPw(){
+  var res = document.getElementById("pw-res");
+  if(!CUR){res.style.color="var(--red)";res.textContent="Seleziona prima un cliente";return;}
+  res.textContent="..."; res.style.color="var(--gold)";
+  fetch("/api/set_client_password",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({client_id:CUR})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      res.style.color="var(--green)";
+      res.textContent="✅ Reset eseguito — pw provvisoria: "+d.default_pw;
+    } else {res.style.color="var(--red)";res.textContent="Errore: "+(d.error||"");}
+  });
+}
+
+function doAll(){
+  var txt = document.getElementById("all-txt").value.trim();
+  var res = document.getElementById("all-res");
+  if(!txt){res.style.color="var(--red)";res.textContent="Testo vuoto";return;}
+  var keys = Object.keys(DB);
+  res.textContent="Invio a "+keys.length+" clienti..."; res.style.color="var(--gold)";
+  Promise.all(keys.map(function(cid){
+    return fetch("/api/send_message/"+cid,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+      body:JSON.stringify({text:txt})
+    }).then(function(r){return r.json();});
+  })).then(function(rs){
+    var ok = rs.filter(function(d){return d.ok;}).length;
+    res.style.color="var(--green)";
+    res.textContent="Inviato a "+ok+"/"+keys.length+" clienti";
+    setTimeout(function(){closeMO(null,"modal-all");},1500);
+  });
+}
+</script>
+<!-- Modal genera codice -->
+<div class="modal-ov" id="modal-gen" onclick="closeMO(event,'modal-gen')">
+  <div class="modal">
+    <div class="modal-title">&#128273; Genera Codice Attivazione <button class="modal-close" onclick="closeMO(null,'modal-gen')">&#10005;</button></div>
+    <input class="inp" type="password" id="gen-pw" placeholder="Password licenze">
+    <input class="inp" type="number" id="gen-days" value="30" placeholder="Giorni">
+    <button class="btn-full btn-gold" onclick="doGen()">GENERA</button>
+    <div class="modal-res" id="gen-res"></div>
+    <div id="gen-code" style="display:none;margin-top:12px;background:#0d2b1f;border:1px solid #26a69a;border-radius:8px;padding:12px;text-align:center;">
+      <div style="font-size:10px;color:#787b86;margin-bottom:6px;">CODICE DI ATTIVAZIONE</div>
+      <div id="gen-code-val" style="font-family:monospace;font-size:13px;color:#26a69a;word-break:break-all;"></div>
+      <button onclick="copyCode()" style="margin-top:10px;background:#1e222d;border:1px solid #2a2e39;border-radius:6px;padding:6px 14px;color:#d1d4dc;cursor:pointer;font-size:11px;">&#128203; Copia</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function doGen(){
+  var pw   = document.getElementById("gen-pw").value.trim();
+  var days = parseInt(document.getElementById("gen-days").value)||30;
+  var res  = document.getElementById("gen-res");
+  var box  = document.getElementById("gen-code");
+  if(!CUR){res.style.color="var(--red)";res.textContent="Seleziona prima un cliente";return;}
+  if(!pw){res.style.color="var(--red)";res.textContent="Inserisci la password licenze";return;}
+  res.textContent="..."; res.style.color="var(--gold)";
+  box.style.display="none";
+  fetch("/api/generate_license",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW,"X-License-Password":pw},
+    body:JSON.stringify({client_id:CUR, days:days})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      res.textContent="✅ Codice generato per "+days+"gg";
+      res.style.color="var(--green)";
+      document.getElementById("gen-code-val").textContent = d.code;
+      box.style.display="block";
+      setTimeout(function(){ load(); }, 2000);
+    } else {
+      res.style.color="var(--red)";
+      res.textContent="❌ "+(d.error||"Password errata");
+    }
+  }).catch(function(e){
+    res.style.color="var(--red)";
+    res.textContent="Errore: "+String(e);
+  });
+}
+function copyCode(){
+  var code = document.getElementById("gen-code-val").textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var btn = event.target;
+    btn.textContent="&#10003; Copiato!";
+    setTimeout(function(){btn.innerHTML="&#128203; Copia";},2000);
+  });
+}
+</script>
+<!-- Modal nome cliente -->
+<div class="modal-ov" id="modal-name" onclick="closeMO(event,'modal-name')">
+  <div class="modal">
+    <div class="modal-title">&#9998; Nome Cliente <button class="modal-close" onclick="closeMO(null,'modal-name')">&#10005;</button></div>
+    <input class="inp" type="text" id="name-val" placeholder="Nome cliente...">
+    <button class="btn-full btn-gold" onclick="doSetName()">SALVA</button>
+    <div class="modal-res" id="name-res"></div>
+  </div>
+</div>
+
+<!-- Modal nuovo distributore -->
+<div class="modal-ov" id="modal-new-dist" onclick="closeMO(event,'modal-new-dist')">
+  <div class="modal">
+    <div class="modal-title">&#128101; Nuovo Distributore <button class="modal-close" onclick="closeMO(null,'modal-new-dist')">&#10005;</button></div>
+    <input class="inp" type="text" id="nd-id" placeholder="ID (es: mario)">
+    <input class="inp" type="text" id="nd-name" placeholder="Nome completo (opzionale)">
+    <input class="inp" type="text" id="nd-pw" placeholder="Password">
+    <button class="btn-full btn-gold" onclick="doNewDist()">CREA</button>
+    <div class="modal-res" id="nd-res"></div>
+  </div>
+</div>
+
+<!-- Modal assegna cliente a distributore -->
+<div class="modal-ov" id="modal-assign" onclick="closeMO(event,'modal-assign')">
+  <div class="modal">
+    <div class="modal-title">&#43; Assegna Cliente <button class="modal-close" onclick="closeMO(null,'modal-assign')">&#10005;</button></div>
+    <select class="inp" id="assign-cid" style="cursor:pointer;"></select>
+    <button class="btn-full btn-gold" onclick="doDistAssign()">ASSEGNA</button>
+    <div class="modal-res" id="assign-res"></div>
+  </div>
+</div>
+
+<!-- Modal messaggio a distributore -->
+<div class="modal-ov" id="modal-dist-msg" onclick="closeMO(event,'modal-dist-msg')">
+  <div class="modal">
+    <div class="modal-title">&#9993; Messaggio a Distributore <button class="modal-close" onclick="closeMO(null,'modal-dist-msg')">&#10005;</button></div>
+    <div style="color:var(--text2);font-size:11px;margin-bottom:10px;">Invia a: <b id="dist-msg-lbl" style="color:var(--gold);"></b></div>
+    <textarea class="inp" id="dist-msg-txt" rows="4" placeholder="Scrivi il messaggio..."></textarea>
+    <button class="btn-full btn-gold" onclick="doDistMsg()">INVIA</button>
+    <div class="modal-res" id="dist-msg-res"></div>
+  </div>
+</div>
+
+<script>
+var _curDistId = "";
+
+function openDistMsg(did){
+  _curDistId = did;
+  var d = DIST_DB[did];
+  document.getElementById("dist-msg-lbl").textContent = (d&&d.name?d.name+" ("+did+")":did);
+  document.getElementById("dist-msg-txt").value = "";
+  document.getElementById("dist-msg-res").textContent = "";
+  openModal("modal-dist-msg");
+}
+
+function doDistMsg(){
+  var txt = document.getElementById("dist-msg-txt").value.trim();
+  var res = document.getElementById("dist-msg-res");
+  if(!txt){res.style.color="var(--red)";res.textContent="Testo vuoto";return;}
+  res.textContent="..."; res.style.color="var(--gold)";
+  fetch("/api/send_message_to_distributor/"+_curDistId,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({text:txt})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      res.style.color="var(--green)"; res.textContent="✅ Inviato!";
+      setTimeout(function(){closeMO(null,"modal-dist-msg");},1200);
+    } else {
+      res.style.color="var(--red)"; res.textContent="❌ "+(d.error||"Errore");
+    }
+  });
+}
+</script>
+<div class="modal-ov" id="modal-quick" onclick="closeMO(event,'modal-quick')">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">⚡ Messaggi Rapidi
+      <div style="display:flex;gap:8px;">
+        <button class="modal-close" onclick="openEditQuick()" style="font-size:13px;color:var(--gold);">✏️</button>
+        <button class="modal-close" onclick="closeMO(null,'modal-quick')">&#10005;</button>
+      </div>
+    </div>
+    <div style="color:var(--text2);font-size:11px;margin-bottom:12px;">Clicca un messaggio per inviarlo al cliente selezionato (<b id="quick-cid-lbl" style="color:var(--gold);"></b>)</div>
+    <div id="quick-btns-wrap" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div class="modal-res" id="quick-res"></div>
+  </div>
+</div>
+
+<!-- Modal modifica messaggi rapidi -->
+<div class="modal-ov" id="modal-edit-quick" onclick="closeMO(event,'modal-edit-quick')">
+  <div class="modal" style="max-width:500px;max-height:80vh;overflow-y:auto;">
+    <div class="modal-title">✏️ Modifica Messaggi Rapidi <button class="modal-close" onclick="closeMO(null,'modal-edit-quick')">&#10005;</button></div>
+    <div id="edit-quick-wrap"></div>
+    <button onclick="addQuickMsg()" style="width:100%;padding:9px;border-radius:8px;border:1px dashed var(--gold);background:transparent;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;margin-bottom:8px;">+ Aggiungi messaggio</button>
+    <button class="btn-full btn-gold" onclick="saveQuickMsgs()" style="margin-top:4px;">SALVA</button>
+    <div class="modal-res" id="edit-quick-res"></div>
+  </div>
+</div>
+
+<script>
+var _quickMsgs = [];
+
+function loadQuickMsgs(){
+  fetch("/api/quick_messages",{headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok) _quickMsgs = d.messages||[];
+  });
+}
+
+function openQuickMsgs(){
+  if(!CUR){ alert("Seleziona prima un cliente dalla dashboard"); return; }
+  document.getElementById("quick-cid-lbl").textContent = CUR;
+  var wrap = document.getElementById("quick-btns-wrap");
+  wrap.innerHTML = "";
+  _quickMsgs.forEach(function(m){
+    var btn = document.createElement("button");
+    btn.style.cssText = "background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:12px;cursor:pointer;text-align:left;transition:border-color .2s;";
+    btn.innerHTML = "<b style='color:var(--gold);'>" + escHtml(m.label) + "</b><br><span style='color:var(--text2);font-size:11px;'>" + escHtml(m.text.substring(0,80)) + (m.text.length>80?"...":"") + "</span>";
+    btn.onmouseover = function(){this.style.borderColor="var(--gold)";};
+    btn.onmouseout  = function(){this.style.borderColor="var(--border)";};
+    btn.onclick = function(){ sendQuickMsg(m.text); };
+    wrap.appendChild(btn);
+  });
+  document.getElementById("quick-res").textContent = "";
+  openModal("modal-quick");
+}
+
+function sendQuickMsg(text){
+  var res = document.getElementById("quick-res");
+  res.style.color="var(--gold)"; res.textContent="Invio...";
+  fetch("/api/send_message/"+CUR,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({text:text})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      res.style.color="var(--green)"; res.textContent="✅ Inviato!";
+      setTimeout(function(){closeMO(null,"modal-quick");},1200);
+    } else {
+      res.style.color="var(--red)"; res.textContent="❌ Errore";
+    }
+  });
+}
+
+function openEditQuick(){
+  var wrap = document.getElementById("edit-quick-wrap");
+  wrap.innerHTML = "";
+  _quickMsgs.forEach(function(m, idx){
+    var div = document.createElement("div");
+    div.id = "qrow-"+idx;
+    div.style.cssText = "background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:10px;position:relative;";
+    div.innerHTML =
+      "<button onclick='removeQuickMsg("+idx+")' style='position:absolute;top:8px;right:8px;background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;'>✕</button>"+
+      "<div style='font-size:10px;color:var(--text2);margin-bottom:4px;'>Label</div>" +
+      "<input id='ql-"+idx+"' value='"+escHtml(m.label)+"' style='width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px;color:var(--text);font-size:12px;margin-bottom:8px;outline:none;'>" +
+      "<div style='font-size:10px;color:var(--text2);margin-bottom:4px;'>Testo</div>" +
+      "<textarea id='qt-"+idx+"' rows='3' style='width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px;color:var(--text);font-size:12px;resize:vertical;outline:none;'>"+escHtml(m.text)+"</textarea>";
+    wrap.appendChild(div);
+  });
+  closeMO(null,"modal-quick");
+  openModal("modal-edit-quick");
+}
+
+function removeQuickMsg(idx){
+  _quickMsgs.splice(idx, 1);
+  openEditQuick();
+}
+
+function addQuickMsg(){
+  _quickMsgs.push({id: Date.now(), label: "🆕 Nuovo messaggio", text: "Scrivi il testo qui..."});
+  openEditQuick();
+}
+
+function saveQuickMsgs(){
+  var res = document.getElementById("edit-quick-res");
+  var msgs = [];
+  var rows = document.querySelectorAll("[id^='qrow-']");
+  rows.forEach(function(row, idx){
+    var lbl = document.getElementById("ql-"+idx);
+    var txt = document.getElementById("qt-"+idx);
+    if(lbl && txt){
+      msgs.push({id: _quickMsgs[idx]?_quickMsgs[idx].id:Date.now()+idx, label:lbl.value.trim(), text:txt.value.trim()});
+    }
+  });
+  fetch("/api/quick_messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({messages:msgs})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      _quickMsgs = msgs;
+      res.style.color="var(--green)"; res.textContent="✅ Salvato!";
+      setTimeout(function(){closeMO(null,"modal-edit-quick");},1000);
+    } else {
+      res.style.color="var(--red)"; res.textContent="❌ Errore";
+    }
+  });
+}
+</script>
+<!-- Modal messaggi automatici -->
+<div class="modal-ov" id="modal-auto-msgs" onclick="closeMO(event,'modal-auto-msgs')">
+  <div class="modal" style="max-width:520px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-title">🤖 Messaggi Automatici
+      <button class="modal-close" onclick="closeMO(null,'modal-auto-msgs')">&#10005;</button>
+    </div>
+    <div style="color:var(--text2);font-size:11px;margin-bottom:14px;">Attiva o disattiva i messaggi inviati automaticamente. Puoi anche modificarne il testo.</div>
+    <div id="auto-msgs-wrap"></div>
+    <button class="btn-full btn-gold" onclick="saveAutoMsgs()" style="margin-top:12px;">SALVA</button>
+    <div class="modal-res" id="auto-msgs-res"></div>
+  </div>
+</div>
+
+<script>
+var _autoMsgsConfig = {};
+var _autoMsgLabels = {
+  welcome:    "👋 Benvenuto (primo avvio exe)",
+  dd_warning: "⚠️ DD giornaliero vicino (-1%)",
+  target:     "🎯 Target raggiunto (PASSATA)",
+  license:    "📅 Licenza in scadenza (3 giorni)",
+};
+
+function loadAutoMsgs(){
+  fetch("/api/auto_messages",{headers:{"X-Admin-Password":APW}})
+  .then(function(r){return r.json();}).then(function(d){
+    if(d.ok) _autoMsgsConfig = d.config||{};
+  });
+}
+
+function openAutoMsgs(){
+  var wrap = document.getElementById("auto-msgs-wrap");
+  wrap.innerHTML = "";
+  Object.keys(_autoMsgLabels).forEach(function(key){
+    var cfg = _autoMsgsConfig[key]||{enabled:true,text:""};
+    var enabled = cfg.enabled !== false;
+    var div = document.createElement("div");
+    div.style.cssText = "background:var(--bg3);border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid var(--border);";
+    div.innerHTML =
+      "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;'>" +
+      "<span style='font-size:12px;font-weight:700;color:var(--text);'>"+_autoMsgLabels[key]+"</span>" +
+      "<label style='display:flex;align-items:center;gap:8px;cursor:pointer;'>" +
+      "<input type='checkbox' id='ae-"+key+"' "+(enabled?"checked":"")+" style='width:16px;height:16px;accent-color:var(--gold);'>" +
+      "<span style='font-size:11px;color:"+(enabled?"var(--green)":"var(--red)")+";' id='ae-lbl-"+key+"'>"+(enabled?"ATTIVO":"DISATTIVO")+"</span>" +
+      "</label></div>" +
+      "<div style='font-size:10px;color:var(--text2);margin-bottom:4px;'>Testo del messaggio</div>" +
+      "<textarea id='at-"+key+"' rows='3' style='width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:8px;color:var(--text);font-size:11px;resize:vertical;outline:none;'>"+escHtml(cfg.text||"")+"</textarea>";
+    wrap.appendChild(div);
+    document.getElementById("ae-"+key).onchange = function(){
+      var on = this.checked;
+      var lbl = document.getElementById("ae-lbl-"+key);
+      lbl.textContent = on?"ATTIVO":"DISATTIVO";
+      lbl.style.color = on?"var(--green)":"var(--red)";
+    };
+  });
+  openModal("modal-auto-msgs");
+}
+
+function saveAutoMsgs(){
+  var res = document.getElementById("auto-msgs-res");
+  var config = {};
+  Object.keys(_autoMsgLabels).forEach(function(key){
+    var cbx = document.getElementById("ae-"+key);
+    var txt = document.getElementById("at-"+key);
+    config[key] = {
+      enabled: cbx?cbx.checked:true,
+      label: _autoMsgLabels[key],
+      text: txt?txt.value.trim():(_autoMsgsConfig[key]||{}).text||""
+    };
+  });
+  fetch("/api/auto_messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({config:config})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){
+      _autoMsgsConfig = config;
+      res.style.color="var(--green)"; res.textContent="✅ Salvato!";
+      setTimeout(function(){closeMO(null,"modal-auto-msgs");},1000);
+    } else {
+      res.style.color="var(--red)"; res.textContent="❌ Errore";
+    }
+  });
+}
+function manualRefresh(btn){
+  btn.disabled=true; btn.textContent="⟳ ...";
+  load();
+  setTimeout(function(){ btn.disabled=false; btn.innerHTML="&#8635; Refresh"; },1500);
+}
+
+function doToggleAdmin(setAdmin){
+  if(!CUR) return;
+  var msg = setAdmin ? "Impostare "+CUR+" come admin? Riceverà notifiche Telegram per tutti gli eventi." : "Rimuovere i privilegi admin da "+CUR+"?";
+  if(!confirm(msg)) return;
+  fetch("/api/set_admin/"+CUR,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Admin-Password":APW},
+    body:JSON.stringify({is_admin: setAdmin})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){ load(); openDetail(CUR); }
+    else alert("Errore: "+(d.error||""));
+  });
+}
+
+function resetFingerprint(){
+  if(!CUR){alert("Seleziona prima un cliente");return;}
+  if(!confirm("Reset PC per "+CUR+"?\nIl prossimo PC che si connette diventerà quello autorizzato.")) return;
+  fetch("/api/reset_fingerprint/"+CUR,{
+    method:"POST",
+    headers:{"X-Admin-Password":APW}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok) alert("✅ Fingerprint resettato. Il cliente può ora connettersi da un nuovo PC.");
+    else alert("❌ Errore: "+(d.error||""));
+  });
+}
+
+function toggleTgAlerts(cid, target) {
+  var chk = document.getElementById(target === "admin" ? "tg-alert-admin" : "tg-alert-dist");
+  var enabled = chk ? chk.checked : false;
+  fetch("/api/toggle_telegram_alerts/" + cid + "/" + target, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Admin-Password": APW
+    },
+    body: JSON.stringify({ enabled: enabled })
+  })
+  .then(function(res) {
+    if(!res.ok) {
+      alert("Errore nell'aggiornamento delle notifiche Telegram.");
+      if (chk) chk.checked = !enabled; // revert
+    }
+  })
+  .catch(function(err) {
+    console.error(err);
+    alert("Errore di rete");
+    if (chk) chk.checked = !enabled; // revert
+  });
+}
+
+function resetAdminHedge(cid, idx) {
+  if(!confirm("Sei sicuro di voler resettare l'Hedge Cumulativo Admin per questa scheda?\nQuesto non resetterà il contatore locale del cliente.")) return;
+  fetch("/api/reset_admin_hedge/" + cid + "/" + idx, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Admin-Password": APW
+    }
+  })
+  .then(function(res) {
+    if(res.ok) {
+      alert("Hedge Cumulativo Admin resettato con successo!");
+      openDetail(cid);
+    } else {
+      alert("Errore nel reset dell'Hedge Cumulativo Admin");
+    }
+  })
+  .catch(function(err) {
+    console.error(err);
+    alert("Errore di rete");
+  });
+}
+
+</script>
+</body></html>
