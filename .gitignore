@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+clients.json
+distributors.json
+trial_fingerprints.json
+broker_history.json
+telegram_links.json
+download_count.json
+gestionale_stato.json
+downloads/

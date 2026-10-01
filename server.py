@@ -4,20 +4,52 @@ import json, os, hashlib, base64, time, secrets, html as _html, threading
 from datetime import datetime, date, timedelta
 from database import load_clients, save_clients, save_client, delete_client as db_delete_client
 
-app = Flask(__name__)
-_secret = os.environ.get("ARBEXA_SECRET", "")
-if not _secret or _secret == "arbexa_secret_2025_change_me":
-    _secret = secrets.token_hex(32)
-app.secret_key = _secret
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-ADMIN_PASSWORD   = os.environ.get("ARBEXA_ADMIN_PW",   "admin2025")
-LICENSE_PASSWORD = os.environ.get("ARBEXA_LICENSE_PW", "licenza2025")
-
 # ── BASE_DIR DINAMICO ────────────────────────────────────────────────
 # Su VPS usa /root/sniper, in locale usa la directory dello script
 _VPS_DIR = "/root/sniper"
 BASE_DIR = _VPS_DIR if os.path.isdir(_VPS_DIR) else os.path.dirname(os.path.abspath(__file__))
+
+# ── SEGRETI ──────────────────────────────────────────────────────────
+# Nessun segreto è scritto nel codice. Vengono letti dalle variabili
+# d'ambiente oppure dal file BASE_DIR/.env (formato KEY=VALUE, una per riga).
+# Vedi .env.example per l'elenco completo.
+def _load_dotenv(path):
+    try:
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k, v = k.strip(), v.strip().strip('"').strip("'")
+                if k and k not in os.environ:
+                    os.environ[k] = v
+    except FileNotFoundError:
+        pass
+
+_load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+def _require_env(name):
+    v = os.environ.get(name, "").strip()
+    if not v:
+        import sys
+        sys.stderr.write(
+            "ERRORE: variabile d'ambiente {} mancante.\n"
+            "Impostala nell'ambiente oppure nel file {}\n"
+            "(vedi .env.example).\n".format(name, os.path.join(BASE_DIR, ".env")))
+        sys.exit(1)
+    return v
+
+app = Flask(__name__)
+_secret = os.environ.get("ARBEXA_SECRET", "").strip()
+if not _secret:
+    _secret = secrets.token_hex(32)
+app.secret_key = _secret
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+ADMIN_PASSWORD   = _require_env("ARBEXA_ADMIN_PW")
+LICENSE_PASSWORD = _require_env("ARBEXA_LICENSE_PW")
+GESTIONALE_PW    = _require_env("ARBEXA_GESTIONALE_PW")
 
 DATA_FILE        = os.path.join(BASE_DIR, "clients.json")
 EXE_DIR          = os.path.join(BASE_DIR, "downloads")
@@ -44,11 +76,12 @@ BROKER_HISTORY_FILE      = os.path.join(BASE_DIR, "broker_history.json")
 TELEGRAM_LINKS_FILE      = os.path.join(BASE_DIR, "telegram_links.json")
 
 # ── TELEGRAM BOT ────────────────────────────────────────────────────
-# Token del bot. Override con env var TELEGRAM_BOT_TOKEN se preferisci.
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8671698515:AAHCujZEM-9f2YnDhRlKXZ32AxOWh0PxFoU")
+# Token del bot: variabile d'ambiente TELEGRAM_BOT_TOKEN (obbligatoria).
+TELEGRAM_BOT_TOKEN = _require_env("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API       = "https://api.telegram.org/bot{}/".format(TELEGRAM_BOT_TOKEN)
 TRIAL_DAYS               = 2  # giorni di trial gratuito al primo avvio
-_LKEY            = os.environ.get("ARBEXA_LKEY", "arbexa_k9_2025_server_only")
+# Chiave di firma licenze: cambiarla invalida tutte le licenze già emesse.
+_LKEY            = _require_env("ARBEXA_LKEY")
 
 def _hash_pw(pw: str) -> str:
     salt = "arbexa_pw_salt_2026"
@@ -3043,7 +3076,7 @@ def prezzi():
 @app.route("/gestionale")
 def gestionale():
     pw = request.args.get("pw", "")
-    if pw != "tratturo2025":
+    if pw != GESTIONALE_PW:
         return """<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>body{background:#111;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;}
 .box{background:#1a1a1a;padding:30px;border-radius:12px;text-align:center;}
@@ -3070,7 +3103,7 @@ def menu():
 
 # ── GESTIONALE API ────────────────────────────────────────────────
 GESTIONALE_STATE_FILE = os.path.join(BASE_DIR, "gestionale_stato.json")
-GESTIONALE_PW = "tratturo2025"
+# GESTIONALE_PW è definita in testa al file (variabile d'ambiente ARBEXA_GESTIONALE_PW)
 
 def _load_gestionale_stato():
     try:

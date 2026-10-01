@@ -67,9 +67,12 @@ python -m py_compile server.py database.py mt5_utils.py
 
 ### Server environment variables
 
-`ARBEXA_SECRET` (Flask session), `ARBEXA_ADMIN_PW`, `ARBEXA_LICENSE_PW`, `ARBEXA_LKEY` (license signing key),
-`TELEGRAM_BOT_TOKEN`. All have hardcoded defaults in `server.py`; the Telegram token and `GESTIONALE_PW` are
-hardcoded in source. Do not copy those values into docs, commits or new files.
+No secrets live in source. `server.py` reads them from the environment or from `BASE_DIR/.env`
+(`KEY=VALUE` lines, loaded by `_load_dotenv`; environment wins over the file) and exits at startup if any
+required one is missing (`_require_env`). See `.env.example` for the list: `ARBEXA_ADMIN_PW`,
+`ARBEXA_LICENSE_PW`, `ARBEXA_GESTIONALE_PW`, `ARBEXA_LKEY` (license signing key, changing it invalidates all
+issued licenses), `TELEGRAM_BOT_TOKEN`, and optional `ARBEXA_SECRET`. Never add a hardcoded default back, and
+never commit `.env` (it is gitignored, together with the runtime JSON state files).
 
 ### Paths
 
